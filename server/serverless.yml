@@ -1,0 +1,23 @@
+service: lambda-facebook-oauth
+
+plugins:
+  - serverless-offline
+
+custom:
+  stage: "${opt:stage, self:provider.stage}"
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  memorySize: 1536
+  timeout: 10
+  versionFunctions: false
+    
+functions:
+  auth:
+    handler: index.auth
+    events: 
+      - http:
+          path: auth/facebook
+          method: get
+    environment: ${file(env.yaml):${self:custom.stage}}

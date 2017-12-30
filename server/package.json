@@ -1,0 +1,18 @@
+{
+  "name": "jfs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "narfdre",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.149.0",
+    "axios": "^0.17.1",
+    "lodash": "^4.17.4",
+    "oauth": "^0.9.15",
+    "serverless-offline": "^3.16.0"
+  }
+}
