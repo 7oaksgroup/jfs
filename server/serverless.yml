@@ -15,7 +15,7 @@ provider:
     
 functions:
   auth:
-    handler: index.auth
+    handler: auth.facebook
     events: 
       - http:
           path: auth/facebook

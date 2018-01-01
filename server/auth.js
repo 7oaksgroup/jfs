@@ -2,6 +2,7 @@
 
 var OAuth2 = require('oauth').OAuth2
 var https = require('https')
+var jwt = require('jsonwebtoken')
 
 var oauth2 = new OAuth2(
   process.env.appKey,
@@ -15,7 +16,7 @@ var options = {
   redirect_uri: process.env.redirectUrl
 }
 
-module.exports.auth = (event, context, callback) => {
+module.exports.facebook = (event, context, callback) => {
   console.log('event', event)
 
   /*
@@ -68,15 +69,16 @@ module.exports.auth = (event, context, callback) => {
 
             res.on('end', function() {
               var json = JSON.parse(body)
-              console.log('id', json.id)
-              console.log('name', json.name)
-              console.log('email', json.email)
-              console.log('url', json.picture.data.url)
+              var user = {
+                id: json.id,
+                name: json.name,
+                email: json.email,
+                avatar: json.picture.data.url
+              }
+              console.log('++ USER ', user)
 
               // you could save/update user details in a DB here...
-
-              console.log('success', json)
-              callback(null, getSuccessResponse(json, process.env.appUrl))
+              callback(null, getSuccessResponse(user, process.env.appUrl))
             })
           })
           .on('error', function(error) {
@@ -88,13 +90,17 @@ module.exports.auth = (event, context, callback) => {
   }
 }
 
-function getSuccessResponse(userId, url) {
+function getSuccessResponse(user, url) {
   // you could set a session cookie here (e.g. JWT token) and return it to the
   // users browser...
+  const options = '; Domain=' + process.env.domain + '; Path=/; HttpOnly'
+  var token = jwt.sign({ user: user }, 'SUPER SECRET KEY')
   var response = {
     statusCode: 302,
     headers: {
-      Location: url
+      Location: url,
+      'Set-Cookie': 'jwt=' + token + options,
+      Cookie: 'jwt=' + token + options
     }
   }
   return response
