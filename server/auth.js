@@ -94,7 +94,7 @@ function getSuccessResponse(user, url) {
   // you could set a session cookie here (e.g. JWT token) and return it to the
   // users browser...
   // const options = '; Domain=' + process.env.domain + '; Path=/; HttpOnly'
-  var token = jwt.sign({ user: user }, 'SUPER SECRET KEY')
+  var token = jwt.sign(user, 'SUPER SECRET KEY')
   var response = {
     statusCode: 200,
     headers: {

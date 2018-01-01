@@ -5,6 +5,7 @@
       <div class="image"></div>
       <div class="form">
           Chill out
+          <img v-if="currentUser !== undefined && currentUser.avatar" :src="currentUser.avatar" />
       </div>
     </div>
   </div>

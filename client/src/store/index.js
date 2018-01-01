@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { Base64 } from 'js-base64'
 import createLogger from 'vuex/dist/logger'
 import UsersApi from '../api/users'
 
@@ -24,14 +25,15 @@ const mutations = {
 
 const actions = {
   async register({ commit, state }) {
-    const response = await UsersApi.register(state.currentUser)
-    commit('updateUser', response)
+    // const response = await UsersApi.register(state.currentUser)
+    // commit('updateUser', response)
   },
   async facebookConnect({ commit, state }, {search}) {
     const response = await UsersApi.facebookConnect(search)
     console.log('response', response)
-    debugger
-    // commit('updateUser', response)
+    const raw = Base64.decode(response.data.jwt.split('.')[1])
+    const user = JSON.parse(raw)
+    commit('updateUser', user)
   }
 }
 

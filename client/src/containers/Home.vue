@@ -7,7 +7,7 @@
           <span>you know why.</span>
         </h1>
       </div>
-      <Button href="localhost:3000/auth/facebook">{{action}}</Button>
+      <Button href="/login/facebook">{{action}}</Button>
     </div>
   </div>
 </template>
