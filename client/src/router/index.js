@@ -26,7 +26,7 @@ export default new Router({
     },
     {
       path: '/login/facebook',
-      redirect: 'http://localhost:3000/auth/facebook'
+      redirect: () => { window.location.href = 'http://localhost:3000/auth/facebook' }
     }
   ]
 })
