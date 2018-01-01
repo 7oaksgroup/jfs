@@ -26,6 +26,12 @@ const actions = {
   async register({ commit, state }) {
     const response = await UsersApi.register(state.currentUser)
     commit('updateUser', response)
+  },
+  async facebookConnect({ commit, state }, {search}) {
+    const response = await UsersApi.facebookConnect(search)
+    console.log('response', response)
+    debugger
+    // commit('updateUser', response)
   }
 }
 

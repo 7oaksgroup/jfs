@@ -93,14 +93,18 @@ module.exports.facebook = (event, context, callback) => {
 function getSuccessResponse(user, url) {
   // you could set a session cookie here (e.g. JWT token) and return it to the
   // users browser...
-  const options = '; Domain=' + process.env.domain + '; Path=/; HttpOnly'
+  // const options = '; Domain=' + process.env.domain + '; Path=/; HttpOnly'
   var token = jwt.sign({ user: user }, 'SUPER SECRET KEY')
   var response = {
-    statusCode: 302,
+    statusCode: 200,
     headers: {
       Location: url,
-      'Set-Cookie': 'jwt=' + token + options,
-      Cookie: 'jwt=' + token + options
+      'X-JWT-TOKEN': token,
+      // 'Set-Cookie': 'jwt=' + token + options,
+      // Cookie: 'jwt=' + token + options
+    },
+    body: { 
+      jwt: token 
     }
   }
   return response
