@@ -23,4 +23,9 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
+.container {
+  max-width: 1440px;
+  margin: auto;
+  position: relative;
+}
 </style>

@@ -3,6 +3,10 @@
 var OAuth2 = require('oauth').OAuth2
 var https = require('https')
 var jwt = require('jsonwebtoken')
+var pg = require('knex')({
+  client: 'pg',
+  connection: process.env.dbUrl
+})
 
 var oauth2 = new OAuth2(
   process.env.appKey,
@@ -17,8 +21,6 @@ var options = {
 }
 
 module.exports.facebook = (event, context, callback) => {
-  console.log('event', event)
-
   /*
   * return error if query string has an error parameter. e.g. if user
   * declines to grant access.
@@ -70,7 +72,7 @@ module.exports.facebook = (event, context, callback) => {
             res.on('end', function() {
               var json = JSON.parse(body)
               var user = {
-                id: json.id,
+                facebookId: json.id,
                 name: json.name,
                 email: json.email,
                 avatar: json.picture.data.url
@@ -78,7 +80,32 @@ module.exports.facebook = (event, context, callback) => {
               console.log('++ USER ', user)
 
               // you could save/update user details in a DB here...
-              callback(null, getSuccessResponse(user, process.env.appUrl))
+              pg('prelaunch.registration')
+                .select('*')
+                .where({ facebook_id: user.facebookId })
+                .then(function(rows) {
+                  if (rows.length > 0) {
+                    return rows
+                  } else {
+                    return pg('prelaunch.registration')
+                      .insert({
+                        facebook_id: user.facebookId,
+                        facebook_name: user.name,
+                        facebook_email: user.email,
+                        facebook_avatar: user.avatar
+                      })
+                      .returning('*')
+                  }
+                })
+                .then(function(rows) {
+                  callback(
+                    null,
+                    getSuccessResponse(
+                      Object.assign({}, rows[0]),
+                      process.env.appUrl
+                    )
+                  )
+                })
             })
           })
           .on('error', function(error) {
@@ -90,21 +117,15 @@ module.exports.facebook = (event, context, callback) => {
   }
 }
 
-function getSuccessResponse(user, url) {
-  // you could set a session cookie here (e.g. JWT token) and return it to the
-  // users browser...
-  // const options = '; Domain=' + process.env.domain + '; Path=/; HttpOnly'
+function getSuccessResponse(user) {
   var token = jwt.sign(user, 'SUPER SECRET KEY')
   var response = {
     statusCode: 200,
     headers: {
-      Location: url,
-      'X-JWT-TOKEN': token,
-      // 'Set-Cookie': 'jwt=' + token + options,
-      // Cookie: 'jwt=' + token + options
+      'X-JWT-TOKEN': token
     },
-    body: { 
-      jwt: token 
+    body: {
+      jwt: token
     }
   }
   return response

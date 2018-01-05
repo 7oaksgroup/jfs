@@ -21,3 +21,10 @@ functions:
           path: auth/facebook
           method: get
     environment: ${file(env.yaml):${self:custom.stage}}
+  register:
+    handler: jfs.register
+    events: 
+      - http:
+          path: api/register
+          method: post
+    environment: ${file(env.yaml):${self:custom.stage}}

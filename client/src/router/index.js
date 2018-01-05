@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/containers/Home'
 import Register from '@/containers/Register'
-import FacebookConnect from '@/containers/Facebook'
 
 Vue.use(Router)
 
@@ -22,7 +21,7 @@ export default new Router({
     {
       path: '/auth/facebook',
       name: 'FacebookConnect',
-      component: FacebookConnect
+      component: Register
     },
     {
       path: '/login/facebook',

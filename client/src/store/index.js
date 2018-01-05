@@ -25,14 +25,15 @@ const mutations = {
 
 const actions = {
   async register({ commit, state }) {
-    // const response = await UsersApi.register(state.currentUser)
-    // commit('updateUser', response)
+    const response = await UsersApi.register(state.currentUser)
+    commit('updateUser', response)
   },
-  async facebookConnect({ commit, state }, {search}) {
+  async facebookConnect({ commit, state }, { search }) {
     const response = await UsersApi.facebookConnect(search)
     console.log('response', response)
     const raw = Base64.decode(response.data.jwt.split('.')[1])
     const user = JSON.parse(raw)
+    console.log('USER OBJECT', user)
     commit('updateUser', user)
   }
 }

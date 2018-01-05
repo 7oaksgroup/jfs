@@ -1,7 +1,9 @@
 <template>
   <div class="header">
-    <div class="logo">
-      JustStylists
+    <div class="container">
+      <div class="logo">
+        JustStylists
+      </div>
     </div>
   </div>
 </template>
