@@ -1,0 +1,1 @@
+alter table prelaunch.registration ADD COLUMN sponsor_id BIGINT NULL REFERENCES prelaunch.registration(id);
