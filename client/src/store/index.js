@@ -30,10 +30,15 @@ const actions = {
   },
   async facebookConnect({ commit, state }, { search }) {
     const response = await UsersApi.facebookConnect(search)
-    console.log('response', response)
+    localStorage.setItem('jwt', response.data.jwt)
     const raw = Base64.decode(response.data.jwt.split('.')[1])
     const user = JSON.parse(raw)
-    console.log('USER OBJECT', user)
+    commit('updateUser', user)
+  },
+  loadUser({ commit }) {
+    const jwt = localStorage.getItem('jwt')
+    const raw = Base64.decode(jwt.split('.')[1])
+    const user = JSON.parse(raw)
     commit('updateUser', user)
   }
 }

@@ -1,6 +1,9 @@
 <script>
 export default {
   name: 'app',
+  beforeCreate() {
+    this.$store.dispatch('loadUser')
+  },
   render() {
     return (
       <div id="app">
