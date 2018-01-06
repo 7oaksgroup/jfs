@@ -10,3 +10,10 @@ $ cd server
 $ npm install
 $ sls offline start
 ```
+
+## Notes
+
+To create migrations: 
+```sh
+node migrate.js create `migration name`
+```
