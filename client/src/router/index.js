@@ -4,6 +4,7 @@ import Home from '@/containers/Home'
 import Register from '@/containers/Register'
 import Facebook from '@/containers/Facebook'
 import Office from '@/containers/Office'
+import Friend from '@/containers/Friend'
 
 Vue.use(Router)
 
@@ -26,6 +27,11 @@ export default new Router({
       component: Office
     },
     {
+      path: '/findfriend',
+      name: 'Find A Friend',
+      component: Friend
+    },
+    {
       path: '/auth/facebook',
       name: 'FacebookConnect',
       component: Facebook
@@ -33,7 +39,7 @@ export default new Router({
     {
       path: '/login/facebook',
       redirect: () => {
-        window.location.href = 'http://localhost:3000/auth/facebook'
+        window.location.href = '/prelaunch/auth/facebook'
       }
     }
   ]

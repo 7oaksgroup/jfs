@@ -8,28 +8,36 @@ var pg = require('knex')({
 
 module.exports.register = (event, context, callback) => {
   const body = JSON.parse(event.body)
+
   pg('prelaunch.registration')
-    .where({ id: body.id })
-    .update({
-      first_name: body.firstName,
-      last_name: body.lastName,
-      email: body.email,
-      avatar_url: body.facebook_avatar,
-      postal_code: body.zip
-    })
-    .returning('*')
-    .then(function(rows) {
-      var response = {
-        statusCode: 200,
-        body: Object.assign({}, rows[0])
-      }
-      callback(null, response)
-    })
-    .catch(function(err) {
-      var response = {
-        statusCode: 500,
-        body: { err }
-      }
-      callback(null, response)
+    .select('id')
+    .where({ email: body.friend })
+    .first()
+    .then(id => {
+      pg('prelaunch.registration')
+        .where({ id: body.id })
+        .update({
+          first_name: body.firstName,
+          last_name: body.lastName,
+          email: body.email,
+          avatar_url: body.facebook_avatar,
+          postal_code: body.zip,
+          sponsor_id: id
+        })
+        .returning('*')
+        .then(function(rows) {
+          var response = {
+            statusCode: 200,
+            body: Object.assign({}, rows[0])
+          }
+          callback(null, response)
+        })
+        .catch(function(err) {
+          var response = {
+            statusCode: 500,
+            body: { err }
+          }
+          callback(null, response)
+        })
     })
 }

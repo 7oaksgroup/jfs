@@ -19,7 +19,7 @@ const state = {
 
 const mutations = {
   updateUser(state, user) {
-    state.currentUser = user
+    state.currentUser = { ...state.currentUser, ...user }
   }
 }
 
@@ -44,6 +44,7 @@ const actions = {
   },
   saveFriend({ commit }, friend) {
     localStorage.setItem('friend', friend)
+    commit('updateUser', { friend })
   }
 }
 
@@ -51,7 +52,8 @@ const getters = {
   firstName: state => state.currentUser.name,
   isLoggedIn: state => {
     return state.currentUser.id && state.currentUser.facebook_id
-  }
+  },
+  getFriend: state => state.currentUser.friend
 }
 
 export default new Vuex.Store({

@@ -18,13 +18,13 @@ functions:
     handler: auth.facebook
     events: 
       - http:
-          path: auth/facebook
+          path: prelaunch/auth/facebook
           method: get
     environment: ${file(env.yaml):${self:custom.stage}}
   register:
     handler: jfs.register
     events: 
       - http:
-          path: api/register
+          path: prelaunch/register
           method: post
     environment: ${file(env.yaml):${self:custom.stage}}
