@@ -33,6 +33,9 @@ export default {
     if (!this.$store.getters.isLoggedIn) {
       this.$router.push('/')
     }
+    if (!this.$store.getters.getFriend) {
+      this.$router.push('/findfriend')
+    }
   },
   methods: {
     register(e) {
