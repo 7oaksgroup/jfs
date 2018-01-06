@@ -36,12 +36,12 @@ module.exports.facebook = (event, context, callback) => {
     callback(null, {
       statusCode: 302,
       headers: {
-        Location: 'https://www.facebook.com/v2.5/dialog/oauth' +
+        Location: 'https://www.facebook.com/v2.11/dialog/oauth' +
           '?client_id=' +
           process.env.appKey +
           '&redirect_uri=' +
           process.env.redirectUrl +
-          '&scope=email'
+          '&scope=email&scope=user_friends'
       }
     })
   } else {
@@ -77,9 +77,7 @@ module.exports.facebook = (event, context, callback) => {
                 email: json.email,
                 avatar: json.picture.data.url
               }
-              console.log('++ USER ', user)
 
-              // you could save/update user details in a DB here...
               pg('prelaunch.registration')
                 .select('*')
                 .where({ facebook_id: user.facebookId })
@@ -92,7 +90,8 @@ module.exports.facebook = (event, context, callback) => {
                         facebook_id: user.facebookId,
                         facebook_name: user.name,
                         facebook_email: user.email,
-                        facebook_avatar: user.avatar
+                        facebook_avatar: user.avatar,
+                        email: user.email
                       })
                       .returning('*')
                   }

@@ -3,6 +3,10 @@ export default {
   name: 'app',
   beforeCreate() {
     this.$store.dispatch('loadUser')
+    const friend = this.$route.query.friend
+    if (friend) {
+      this.$store.dispatch('saveFriend', friend)
+    }
   },
   render() {
     return (

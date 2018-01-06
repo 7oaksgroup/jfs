@@ -14,7 +14,7 @@ module.exports.register = (event, context, callback) => {
       first_name: body.firstName,
       last_name: body.lastName,
       email: body.email,
-      avatar_url: body.avatar,
+      avatar_url: body.facebook_avatar,
       postal_code: body.zip
     })
     .returning('*')

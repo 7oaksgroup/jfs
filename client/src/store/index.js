@@ -37,14 +37,21 @@ const actions = {
   },
   loadUser({ commit }) {
     const jwt = localStorage.getItem('jwt')
-    const raw = Base64.decode(jwt.split('.')[1])
-    const user = JSON.parse(raw)
-    commit('updateUser', user)
+    if (jwt) {
+      const raw = Base64.decode(jwt.split('.')[1])
+      commit('updateUser', JSON.parse(raw))
+    }
+  },
+  saveFriend({ commit }, friend) {
+    localStorage.setItem('friend', friend)
   }
 }
 
 const getters = {
-  firstName: state => state.currentUser.name
+  firstName: state => state.currentUser.name,
+  isLoggedIn: state => {
+    return state.currentUser.id && state.currentUser.facebook_id
+  }
 }
 
 export default new Vuex.Store({

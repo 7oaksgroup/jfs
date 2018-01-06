@@ -8,7 +8,7 @@
             <p>Let us know who you are!</p>
             <input type="text" placeholder="First Name" v-model="currentUser.firstName" required/>
             <input type="text" placeholder="Last Name" v-model="currentUser.lastName" required/>
-            <input type="email" placeholder="Email" v-model="currentUser.facebook_email" required/>
+            <input type="email" placeholder="Email" v-model="currentUser.email" required/>
             <input type="text" placeholder="Zip Code" v-model="currentUser.zip" required/>
             <input type="submit" value="submit"/>
           </form>
@@ -30,8 +30,9 @@ export default {
     Button
   },
   beforeCreate() {
-    const search = window.location.search.substr(1)
-    this.$store.dispatch('facebookConnect', { search })
+    if (!this.$store.getters.isLoggedIn) {
+      this.$router.push('/')
+    }
   },
   methods: {
     register(e) {
