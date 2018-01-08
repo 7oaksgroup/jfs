@@ -2,9 +2,9 @@ import axios from 'axios'
 
 export default {
   register: user => {
-    return axios.post('/api/register', user)
+    return axios.post('/prelaunch/register', user)
   },
   facebookConnect: search => {
-    return axios.get(`http://localhost:3000/auth/facebook?${search}`)
+    return axios.get(`/prelaunch/auth/facebook?${search}`)
   }
 }
