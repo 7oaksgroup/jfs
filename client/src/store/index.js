@@ -14,12 +14,20 @@ const state = {
     lastName: '',
     email: '',
     zip: ''
-  }
+  },
+  friends: []
 }
 
 const mutations = {
   updateUser(state, user) {
     state.currentUser = { ...state.currentUser, ...user }
+  },
+  addFriends(state, friends) {
+    if (Array.isArray(friends)) {
+      state.friends = friends
+    } else {
+      state.friends = [friends]
+    }
   }
 }
 
@@ -45,6 +53,10 @@ const actions = {
   saveFriend({ commit }, friend) {
     localStorage.setItem('friend', friend)
     commit('updateUser', { friend })
+  },
+  async search({ commit }, searchName) {
+    const response = await UsersApi.search(searchName)
+    commit('addFriends', response.data)
   }
 }
 

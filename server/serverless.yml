@@ -28,3 +28,10 @@ functions:
           path: prelaunch/register
           method: post
     environment: ${file(env.yaml):${self:custom.stage}}
+  search:
+    handler: jfs.search
+    events: 
+      - http:
+          path: prelaunch/search
+          method: get
+    environment: ${file(env.yaml):${self:custom.stage}}

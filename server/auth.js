@@ -41,7 +41,7 @@ module.exports.facebook = (event, context, callback) => {
           process.env.appKey +
           '&redirect_uri=' +
           process.env.redirectUrl +
-          '&scope=email&scope=user_friends'
+          '&scope=email,user_friends'
       }
     })
   } else {
@@ -71,6 +71,7 @@ module.exports.facebook = (event, context, callback) => {
 
             res.on('end', function() {
               var json = JSON.parse(body)
+              console.log('FACEBOOK RESPONSE', json)
               var user = {
                 facebookId: json.id,
                 name: json.name,

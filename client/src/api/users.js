@@ -6,5 +6,8 @@ export default {
   },
   facebookConnect: search => {
     return axios.get(`/prelaunch/auth/facebook?${search}`)
+  },
+  search: search => {
+    return axios.get(`/prelaunch/search?name=${search}`)
   }
 }

@@ -41,3 +41,26 @@ module.exports.register = (event, context, callback) => {
         })
     })
 }
+
+module.exports.search = (event, context, callback) => {
+  const name = event.queryStringParameters.name
+
+  pg('prelaunch.registration')
+    .select()
+    .where('first_name', 'like', '%' + name + '%')
+    .orWhere('last_name', 'like', '%' + name + '%')
+    .then(function(rows) {
+      var response = {
+        statusCode: 200,
+        body: Object.assign({}, rows[0])
+      }
+      callback(null, response)
+    })
+    .catch(function(err) {
+      var response = {
+        statusCode: 500,
+        body: { err }
+      }
+      callback(null, response)
+    })
+}

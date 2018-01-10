@@ -38,9 +38,10 @@ export default {
     }
   },
   methods: {
-    register(e) {
+    async register(e) {
       e.preventDefault()
-      this.$store.dispatch('register')
+      await this.$store.dispatch('register')
+      this.$router.push('/office')
     }
   },
   computed: {
