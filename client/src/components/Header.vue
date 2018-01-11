@@ -20,10 +20,11 @@ export default {
   width: 100%;
   height: 65px;
   text-align: left;
+  border-bottom: 1px solid black;
 }
 .logo {
   font-style: italic;
-  padding: 15px 45px;
+  padding: 22px 45px;
   font-weight: 700;
   font-size: 18px;
 }
