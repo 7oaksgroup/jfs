@@ -13,7 +13,8 @@ var prodConfig = {
   migrationsDir: path.resolve(__dirname, 'migrations'),
   user: 'dbadmin',
   host: 'jfs-prelaunch.ckiaj3czwtor.us-east-2.rds.amazonaws.com',
-  db: 'jfs'
+  db: 'jfs',
+  password: process.env.DB_PASSWORD
 }
 
 var config = process.env.NODE_ENV === 'production' ? prodConfig : devConfig
