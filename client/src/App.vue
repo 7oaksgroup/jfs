@@ -3,7 +3,7 @@ export default {
   name: 'app',
   beforeCreate() {
     this.$store.dispatch('loadUser')
-    const friend = this.$route.query.friend
+    const friend = this.$route.query.friend || localStorage.getItem('friend')
     if (friend) {
       this.$store.dispatch('saveFriend', friend)
     }

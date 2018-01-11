@@ -6,14 +6,18 @@ var pg = require('knex')({
   connection: process.env.dbUrl
 })
 
+module.exports.root = (event, context, callback) => {
+  callback(null, {statusCode: 200, body: { message: 'ok' }})
+}
+
 module.exports.register = (event, context, callback) => {
   const body = JSON.parse(event.body)
-
   pg('prelaunch.registration')
     .select('id')
     .where({ email: body.friend })
+      .orWhere( pg.raw('id::varchar = ?', [body.friend]) )
     .first()
-    .then(id => {
+    .then( row => {
       pg('prelaunch.registration')
         .where({ id: body.id })
         .update({
@@ -22,7 +26,7 @@ module.exports.register = (event, context, callback) => {
           email: body.email,
           avatar_url: body.facebook_avatar,
           postal_code: body.zip,
-          sponsor_id: id
+          sponsor_id: row.id
         })
         .returning('*')
         .then(function(rows) {

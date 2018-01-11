@@ -65,7 +65,7 @@ const getters = {
   isLoggedIn: state => {
     return state.currentUser.id && state.currentUser.facebook_id
   },
-  getFriend: state => state.currentUser.friend
+  getFriend: state => state.currentUser.friend || localStorage.getItem('friend')
 }
 
 export default new Vuex.Store({
