@@ -27,6 +27,10 @@ export default new Router({
       component: Office
     },
     {
+      path: '/invite',
+      redirect: '/'
+    },
+    {
       path: '/findfriend',
       name: 'Find A Friend',
       component: Friend
