@@ -7,6 +7,7 @@
       <h3>Share Link</h3>
       <p>User this link to share this community with others!</p>
       <p>{{shareUrl}}</p>
+      <p>{{safeShareUrl}}</p>
     </div>
     <div class="box">
       <h3>Facebook Group</h3>
@@ -35,7 +36,9 @@ export default {
     ...mapState({
       currentUser: state => state.currentUser,
       shareUrl: state =>
-        `${window.location.origin}?friend=${state.currentUser.email}`
+        `${window.location.origin}/invite?friend=${state.currentUser.email}`,
+      safeShareUrl: state =>
+        `${window.location.origin}/invite?friend=${state.currentUser.id}`
     })
   }
 }
