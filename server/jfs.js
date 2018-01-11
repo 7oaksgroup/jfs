@@ -7,7 +7,7 @@ var pg = require('knex')({
 })
 
 module.exports.root = (event, context, callback) => {
-  callback(null, {statusCode: 200, body: { message: 'ok' }})
+  callback(null, { statusCode: 200, body: { message: 'ok' } })
 }
 
 module.exports.register = (event, context, callback) => {
@@ -15,9 +15,9 @@ module.exports.register = (event, context, callback) => {
   pg('prelaunch.registration')
     .select('id')
     .where({ email: body.friend })
-      .orWhere( pg.raw('id::varchar = ?', [body.friend]) )
+    .orWhere(pg.raw('id::varchar = ?', [body.friend]))
     .first()
-    .then( row => {
+    .then(row => {
       pg('prelaunch.registration')
         .where({ id: body.id })
         .update({
@@ -57,6 +57,29 @@ module.exports.search = (event, context, callback) => {
       var response = {
         statusCode: 200,
         body: Object.assign({}, rows[0])
+      }
+      callback(null, response)
+    })
+    .catch(function(err) {
+      var response = {
+        statusCode: 500,
+        body: { err }
+      }
+      callback(null, response)
+    })
+}
+
+module.exports.get = (event, context, callback) => {
+  const id = event.pathParameters.id
+
+  pg('prelaunch.registration')
+    .select()
+    .where({ id: id })
+    .first()
+    .then(function(row) {
+      var response = {
+        statusCode: 200,
+        body: Object.assign({}, row)
       }
       callback(null, response)
     })

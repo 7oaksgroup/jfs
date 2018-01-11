@@ -9,5 +9,8 @@ export default {
   },
   search: search => {
     return axios.get(`/prelaunch/search?name=${search}`)
+  },
+  get: id => {
+    return axios.get(`/prelaunch/user/${id}`)
   }
 }

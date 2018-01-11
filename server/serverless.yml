@@ -41,3 +41,14 @@ functions:
           path: prelaunch/search
           method: get
     environment: ${file(env.yaml):${self:custom.stage}}
+  get:
+    handler: jfs.get
+    events: 
+      - http:
+          path: prelaunch/user/{id}
+          method: get
+          request:
+            parameters:
+              paths:
+                id: true
+    environment: ${file(env.yaml):${self:custom.stage}}

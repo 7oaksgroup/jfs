@@ -43,12 +43,13 @@ const actions = {
     const user = JSON.parse(raw)
     commit('updateUser', user)
   },
-  loadUser({ commit }) {
+  async loadUser({ commit }) {
     const jwt = localStorage.getItem('jwt')
     if (jwt) {
       const raw = Base64.decode(jwt.split('.')[1])
       commit('updateUser', JSON.parse(raw))
     }
+    await UsersApi.get(2)
   },
   saveFriend({ commit }, friend) {
     localStorage.setItem('friend', friend)

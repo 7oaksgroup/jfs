@@ -7,7 +7,7 @@ const path = require('path')
 module.exports = {
   dev: {
     // Paths
-    assetsSubDirectory: 'static',
+    assetsSubDirectory: '',
     assetsPublicPath: '/',
     proxyTable: {
       '/prelaunch': 'http://localhost:3000'
@@ -55,7 +55,7 @@ module.exports = {
 
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
+    assetsSubDirectory: '',
     assetsPublicPath: '/',
 
     /**
