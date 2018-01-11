@@ -21,12 +21,14 @@ functions:
       - http:
           path: /
           method: get
+          cors: true
   auth:
     handler: auth.facebook
     events: 
       - http:
           path: prelaunch/auth/facebook
           method: get
+          cors: true
     environment: ${file(env.yaml):${self:custom.stage}}
   register:
     handler: jfs.register
@@ -34,6 +36,7 @@ functions:
       - http:
           path: prelaunch/register
           method: post
+          cors: true
     environment: ${file(env.yaml):${self:custom.stage}}
   search:
     handler: jfs.search
@@ -41,6 +44,7 @@ functions:
       - http:
           path: prelaunch/search
           method: get
+          cors: true
     environment: ${file(env.yaml):${self:custom.stage}}
   get:
     handler: jfs.get
@@ -48,6 +52,7 @@ functions:
       - http:
           path: prelaunch/user/{id}
           method: get
+          cors: true
           request:
             parameters:
               paths:
