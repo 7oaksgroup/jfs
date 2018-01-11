@@ -1,6 +1,8 @@
 'use strict'
 
 var https = require('https')
+
+console.log('DB creds:', process.env.dbUrl)
 var pg = require('knex')({
   client: 'pg',
   connection: process.env.dbUrl
