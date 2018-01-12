@@ -6,13 +6,12 @@ var pg = require('knex')({
   connection: process.env.dbUrl
 })
 
-const cors = module.exports.cors = {
-  "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
-  "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
-}
-
 module.exports.root = (event, context, callback) => {
-  callback(null, { statusCode: 200, headers: cors, body: JSON.stringify({ message: 'ok' }) })
+  callback(null, {
+    statusCode: 200,
+    headers: {},
+    body: JSON.stringify({ message: 'ok' })
+  })
 }
 
 module.exports.register = (event, context, callback) => {
@@ -37,16 +36,16 @@ module.exports.register = (event, context, callback) => {
         .then(function(rows) {
           var response = {
             statusCode: 200,
-            headers: cors,
-            body: Object.assign({}, rows[0])
+            headers: {},
+            body: JSON.stringify(Object.assign({}, rows[0]))
           }
           callback(null, response)
         })
         .catch(function(err) {
           var response = {
             statusCode: 500,
-            headers: cors,
-            body: { err }
+            headers: {},
+            body: JSON.stringify({ err: err })
           }
           callback(null, response)
         })
@@ -63,16 +62,16 @@ module.exports.search = (event, context, callback) => {
     .then(function(rows) {
       var response = {
         statusCode: 200,
-        headers: cors,
-        body: Object.assign({}, rows[0])
+        headers: {},
+        body: JSON.stringify(Object.assign({}, rows[0]))
       }
       callback(null, response)
     })
     .catch(function(err) {
       var response = {
         statusCode: 500,
-        headers: cors,
-        body: { err }
+        headers: {},
+        body: JSON.stringify({ err: err })
       }
       callback(null, response)
     })
@@ -90,18 +89,18 @@ module.exports.get = (event, context, callback) => {
       console.log('get.success')
       var response = {
         statusCode: 200,
-        headers: cors,
-        body: Object.assign({}, row)
+        headers: {},
+        body: JSON.stringify(Object.assign({}, row))
       }
-      callback(null, JSON.stringify(response) )
+      callback(null, response)
     })
     .catch(function(err) {
       console.log('get.fail', err)
       var response = {
         statusCode: 500,
-        headers: cors,
-        body: { err }
+        headers: {},
+        body: JSON.stringify({ err: err })
       }
-      callback(null, JSON.stringify(response) )
+      callback(null, response)
     })
 }

@@ -49,7 +49,8 @@ const actions = {
       const raw = Base64.decode(jwt.split('.')[1])
       commit('updateUser', JSON.parse(raw))
     }
-    await UsersApi.get(2)
+    const user = await UsersApi.get(2)
+    commit('updateUser', user)
   },
   saveFriend({ commit }, friend) {
     localStorage.setItem('friend', friend)
