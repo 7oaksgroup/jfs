@@ -12,7 +12,7 @@ const cors = module.exports.cors = {
 }
 
 module.exports.root = (event, context, callback) => {
-  callback(null, { statusCode: 200, headers: cors, body: { message: 'ok' } })
+  callback(null, { statusCode: 200, headers: cors, body: JSON.stringify({ message: 'ok' }) })
 }
 
 module.exports.register = (event, context, callback) => {
@@ -93,7 +93,7 @@ module.exports.get = (event, context, callback) => {
         headers: cors,
         body: Object.assign({}, row)
       }
-      callback(null, response)
+      callback(null, JSON.stringify(response) )
     })
     .catch(function(err) {
       console.log('get.fail', err)
@@ -102,6 +102,6 @@ module.exports.get = (event, context, callback) => {
         headers: cors,
         body: { err }
       }
-      callback(null, response)
+      callback(null, JSON.stringify(response) )
     })
 }
