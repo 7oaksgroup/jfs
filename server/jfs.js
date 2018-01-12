@@ -1,10 +1,30 @@
 'use strict'
 
+var request = require('request')
 var https = require('https')
 var pg = require('knex')({
   client: 'pg',
   connection: process.env.dbUrl
 })
+
+
+
+module.exports.google = (event, context, callback) => {
+  var Client = require('pg').Client
+
+  var pg2 = new Client({
+    connectionString: process.env.dbUrl
+  })
+  pg2.connect()
+  pg2.query('SELECT NOW()', (err, res) => {
+    callback(null, {
+      statusCode: 200,
+      headers: {},
+      body: JSON.stringify(res.rows[0])
+    })
+    pg2.end()
+  });
+}
 
 module.exports.root = (event, context, callback) => {
   callback(null, {
