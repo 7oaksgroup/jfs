@@ -43,7 +43,7 @@ export default new Router({
     {
       path: '/login/facebook',
       redirect: () => {
-        window.location.href = '/prelaunch/auth/facebook'
+        window.location.href = `${process.env.API_URL}/prelaunch/auth/facebook`
       }
     }
   ]

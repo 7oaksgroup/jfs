@@ -46,8 +46,8 @@ functions:
           method: get
           cors: true
     environment: ${file(env.yaml):${self:custom.stage}}
-  get:
-    handler: jfs.get
+  getUser:
+    handler: jfs.getUser
     events: 
       - http:
           path: prelaunch/user/{id}

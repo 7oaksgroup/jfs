@@ -77,7 +77,7 @@ module.exports.search = (event, context, callback) => {
     })
 }
 
-module.exports.get = (event, context, callback) => {
+module.exports.getUser = (event, context, callback) => {
   const id = event.pathParameters.id
 
   console.log('get.pre')
@@ -87,12 +87,11 @@ module.exports.get = (event, context, callback) => {
     .first()
     .then(function(row) {
       console.log('get.success')
-      var response = {
+      callback(null, {
         statusCode: 200,
         headers: {},
         body: JSON.stringify(Object.assign({}, row))
-      }
-      callback(null, response)
+      })
     })
     .catch(function(err) {
       console.log('get.fail', err)

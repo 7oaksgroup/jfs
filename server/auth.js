@@ -8,8 +8,6 @@ var pg = require('knex')({
   connection: process.env.dbUrl
 })
 
-const cors = require('./jfs').cors
-
 var oauth2 = new OAuth2(
   process.env.appKey,
   process.env.appSecret,
@@ -37,7 +35,6 @@ module.exports.facebook = (event, context, callback) => {
     // redirect to facebook if "code" is not provided in the query string
     callback(null, {
       statusCode: 302,
-      headers: cors,
       headers: {
         Location: 'https://www.facebook.com/v2.11/dialog/oauth' +
           '?client_id=' +
@@ -124,7 +121,6 @@ function getSuccessResponse(user) {
   var token = jwt.sign(user, 'SUPER SECRET KEY')
   var response = {
     statusCode: 200,
-    headers: cors,
     headers: {
       'X-JWT-TOKEN': token
     },
@@ -140,7 +136,7 @@ function getFailureResponse(error) {
   // do something pretty here
   var response = {
     statusCode: 400,
-    headers: cors,
+    headers: {},
     body: JSON.stringify(error)
   }
   return response
