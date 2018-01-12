@@ -2,27 +2,29 @@
 
 var request = require('request')
 var https = require('https')
-var pg = require('knex')({
-  client: 'pg',
-  connection: process.env.dbUrl
-})
+// var pg = require('knex')({
+//   client: 'pg',
+//   connection: process.env.dbUrl
+// })
 
 
 
 module.exports.google = (event, context, callback) => {
   var Client = require('pg').Client
-
+  
   var pg2 = new Client({
     connectionString: process.env.dbUrl
   })
+  console.log('client')
   pg2.connect()
-  pg2.query('SELECT NOW()', (err, res) => {
+  console.log('connect')
+  pg2.query('SELECT 1 as foo', (err, res) => {
+    console.log('success', res.rows[0])
+    var data = JSON.stringify(res.rows[0])
     callback(null, {
       statusCode: 200,
-      headers: {},
-      body: JSON.stringify(res.rows[0])
+      body: data
     })
-    pg2.end()
   });
 }
 
