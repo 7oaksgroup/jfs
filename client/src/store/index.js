@@ -49,7 +49,7 @@ const actions = {
       const raw = Base64.decode(jwt.split('.')[1])
       const parsed = JSON.parse(raw)
       const user = await UsersApi.get(parsed.id)
-      commit('updateUser', user)
+      commit('updateUser', user.data)
     }
   },
   saveFriend({ commit }, friend) {
