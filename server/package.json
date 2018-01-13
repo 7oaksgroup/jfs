@@ -17,7 +17,6 @@
     "lodash": "^4.17.4",
     "oauth": "^0.9.15",
     "pg": "^7.4.0",
-    "request": "^2.83.0",
     "serverless-offline": "^3.16.0",
     "sql-migrations": "^1.0.1"
   },

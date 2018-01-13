@@ -37,9 +37,13 @@ const actions = {
     commit('updateUser', response)
   },
   async facebookConnect({ commit, state }, { search }) {
+    console.log('INSIDE FACEBOOK CONNECT ACTION')
     const response = await UsersApi.facebookConnect(search)
+    console.log('GOT RESPONSE FROM FACEBOOK API CALL', response)
     localStorage.setItem('jwt', response.data.jwt)
+    console.log('SAVED TO LOCALSTORAGE')
     const raw = Base64.decode(response.data.jwt.split('.')[1])
+    console.log('RAW INFO', raw)
     const user = JSON.parse(raw)
     commit('updateUser', user)
   },

@@ -127,9 +127,7 @@ function getSuccessResponse(user) {
     headers: {
       'X-JWT-TOKEN': token
     },
-    body: {
-      jwt: token
-    }
+    body: JSON.stringify({ jwt: token })
   }
   return response
 }

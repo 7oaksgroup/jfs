@@ -1,23 +1,19 @@
 'use strict'
 
-var request = require('request')
-var https = require('https')
-var pg = require('knex')({
-  client: 'pg',
-  connection: process.env.dbUrl
-})
-
 module.exports.root = (event, context, callback) => {
   callback(null, {
     statusCode: 200,
     headers: {},
     body: JSON.stringify({ message: 'ok' })
   })
-  pg.destroy()
 }
 
 module.exports.register = (event, context, callback) => {
   const body = JSON.parse(event.body)
+  var pg = require('knex')({
+    client: 'pg',
+    connection: process.env.dbUrl
+  })
   pg('prelaunch.registration')
     .select('id')
     .where({ email: body.friend })
@@ -59,6 +55,10 @@ module.exports.register = (event, context, callback) => {
 module.exports.search = (event, context, callback) => {
   const name = event.queryStringParameters.name
 
+  var pg = require('knex')({
+    client: 'pg',
+    connection: process.env.dbUrl
+  })
   pg('prelaunch.registration')
     .select()
     .where('first_name', 'like', '%' + name + '%')
@@ -86,6 +86,10 @@ module.exports.search = (event, context, callback) => {
 module.exports.getUser = (event, context, callback) => {
   const id = event.pathParameters.id
 
+  var pg = require('knex')({
+    client: 'pg',
+    connection: process.env.dbUrl
+  })
   pg('prelaunch.registration')
     .select()
     .where({ id: id })
@@ -93,7 +97,6 @@ module.exports.getUser = (event, context, callback) => {
     .then(function(row) {
       callback(null, {
         statusCode: 200,
-        headers: {},
         body: JSON.stringify(Object.assign({}, row))
       })
       pg.destroy()
@@ -102,8 +105,7 @@ module.exports.getUser = (event, context, callback) => {
       console.log('get.fail', err)
       var response = {
         statusCode: 500,
-        headers: {},
-        body: JSON.stringify({ err: err })
+        body: err
       }
       callback(null, response)
       pg.destroy()
