@@ -2,12 +2,10 @@
 
 var request = require('request')
 var https = require('https')
-// var pg = require('knex')({
-//   client: 'pg',
-//   connection: process.env.dbUrl
-// })
-
-
+var pg = require('knex')({
+  client: 'pg',
+  connection: process.env.dbUrl
+})
 
 module.exports.google = (event, context, callback) => {
   var Client = require('pg').Client
@@ -16,16 +14,22 @@ module.exports.google = (event, context, callback) => {
     connectionString: process.env.dbUrl
   })
   console.log('client')
-  pg2.connect()
-  console.log('connect')
-  pg2.query('SELECT 1 as foo', (err, res) => {
+  pg2.connect().then( () => {
+    console.log('connect')
+    return pg2.query('SELECT 1 as foo')
+  }).then( res => {
     console.log('success', res.rows[0])
     var data = JSON.stringify(res.rows[0])
+    console.log('stringified', data)
     callback(null, {
       statusCode: 200,
       body: data
     })
-  });
+    console.log('afterCallback')
+    return pg2.end()
+  }).then( () => {
+    console.log('after end')
+  })
 }
 
 module.exports.root = (event, context, callback) => {
@@ -34,6 +38,7 @@ module.exports.root = (event, context, callback) => {
     headers: {},
     body: JSON.stringify({ message: 'ok' })
   })
+  pg.destroy()
 }
 
 module.exports.register = (event, context, callback) => {
@@ -62,6 +67,7 @@ module.exports.register = (event, context, callback) => {
             body: JSON.stringify(Object.assign({}, rows[0]))
           }
           callback(null, response)
+          pg.destroy()
         })
         .catch(function(err) {
           var response = {
@@ -70,6 +76,7 @@ module.exports.register = (event, context, callback) => {
             body: JSON.stringify({ err: err })
           }
           callback(null, response)
+          pg.destroy()
         })
     })
 }
@@ -96,6 +103,7 @@ module.exports.search = (event, context, callback) => {
         body: JSON.stringify({ err: err })
       }
       callback(null, response)
+      pg.destroy()
     })
 }
 
@@ -114,6 +122,7 @@ module.exports.getUser = (event, context, callback) => {
         headers: {},
         body: JSON.stringify(Object.assign({}, row))
       })
+      pg.destroy()
     })
     .catch(function(err) {
       console.log('get.fail', err)
@@ -123,5 +132,6 @@ module.exports.getUser = (event, context, callback) => {
         body: JSON.stringify({ err: err })
       }
       callback(null, response)
+      pg.destroy()
     })
 }
