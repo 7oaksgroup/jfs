@@ -7,31 +7,6 @@ var pg = require('knex')({
   connection: process.env.dbUrl
 })
 
-module.exports.google = (event, context, callback) => {
-  var Client = require('pg').Client
-  
-  var pg2 = new Client({
-    connectionString: process.env.dbUrl
-  })
-  console.log('client')
-  pg2.connect().then( () => {
-    console.log('connect')
-    return pg2.query('SELECT 1 as foo')
-  }).then( res => {
-    console.log('success', res.rows[0])
-    var data = JSON.stringify(res.rows[0])
-    console.log('stringified', data)
-    callback(null, {
-      statusCode: 200,
-      body: data
-    })
-    console.log('afterCallback')
-    return pg2.end()
-  }).then( () => {
-    console.log('after end')
-  })
-}
-
 module.exports.root = (event, context, callback) => {
   callback(null, {
     statusCode: 200,
@@ -95,6 +70,7 @@ module.exports.search = (event, context, callback) => {
         body: JSON.stringify(Object.assign({}, rows[0]))
       }
       callback(null, response)
+      pg.destroy()
     })
     .catch(function(err) {
       var response = {
@@ -110,13 +86,11 @@ module.exports.search = (event, context, callback) => {
 module.exports.getUser = (event, context, callback) => {
   const id = event.pathParameters.id
 
-  console.log('get.pre')
   pg('prelaunch.registration')
     .select()
     .where({ id: id })
     .first()
     .then(function(row) {
-      console.log('get.success')
       callback(null, {
         statusCode: 200,
         headers: {},

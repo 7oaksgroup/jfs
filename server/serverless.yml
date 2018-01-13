@@ -15,14 +15,6 @@ provider:
   versionFunctions: false
     
 functions:
-  google:
-    handler: jfs.google
-    events: 
-      - http:
-          path: /google
-          method: get
-          cors: true
-    environment: ${file(env.yaml):${self:custom.stage}}
   root:
     handler: jfs.root
     events: 

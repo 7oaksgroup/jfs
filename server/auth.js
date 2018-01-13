@@ -3,10 +3,6 @@
 var OAuth2 = require('oauth').OAuth2
 var https = require('https')
 var jwt = require('jsonwebtoken')
-var pg = require('knex')({
-  client: 'pg',
-  connection: process.env.dbUrl
-})
 
 var oauth2 = new OAuth2(
   process.env.appKey,
@@ -79,6 +75,11 @@ module.exports.facebook = (event, context, callback) => {
                 avatar: json.picture.data.url
               }
 
+              var pg = require('knex')({
+                client: 'pg',
+                connection: process.env.dbUrl
+              })
+
               pg('prelaunch.registration')
                 .select('*')
                 .where({ facebook_id: user.facebookId })
@@ -105,12 +106,14 @@ module.exports.facebook = (event, context, callback) => {
                       process.env.appUrl
                     )
                   )
+                  pg.destroy()
                 })
             })
           })
           .on('error', function(error) {
             console.log(error)
             callback(null, getFailureResponse(error))
+            pg.destroy()
           })
       }
     )
