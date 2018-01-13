@@ -7,14 +7,7 @@ import UsersApi from '../api/users'
 Vue.use(Vuex)
 
 const state = {
-  currentUser: {
-    id: undefined,
-    avatar: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    zip: ''
-  },
+  currentUser: {},
   friends: []
 }
 
@@ -65,7 +58,10 @@ const actions = {
 const getters = {
   firstName: state => state.currentUser.name,
   isLoggedIn: state => {
-    return state.currentUser.id && state.currentUser.facebook_id
+    if (state.currentUser.id && state.currentUser.facebook_id) {
+      return true
+    }
+    return false
   },
   getFriend: state => state.currentUser.friend || localStorage.getItem('friend')
 }
