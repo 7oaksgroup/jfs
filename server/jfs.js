@@ -34,7 +34,9 @@ module.exports.register = (event, context, callback) => {
         .then(function(rows) {
           var response = {
             statusCode: 200,
-            headers: {},
+            headers: {
+              'Access-Control-Allow-Origin': '*' // Required for CORS support to work
+            },
             body: JSON.stringify(Object.assign({}, rows[0]))
           }
           callback(null, response)
@@ -43,7 +45,9 @@ module.exports.register = (event, context, callback) => {
         .catch(function(err) {
           var response = {
             statusCode: 500,
-            headers: {},
+            headers: {
+              'Access-Control-Allow-Origin': '*' // Required for CORS support to work
+            },
             body: JSON.stringify({ err: err })
           }
           callback(null, response)
@@ -66,7 +70,9 @@ module.exports.search = (event, context, callback) => {
     .then(function(rows) {
       var response = {
         statusCode: 200,
-        headers: {},
+        headers: {
+          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
+        },
         body: JSON.stringify(Object.assign({}, rows[0]))
       }
       callback(null, response)
@@ -75,7 +81,9 @@ module.exports.search = (event, context, callback) => {
     .catch(function(err) {
       var response = {
         statusCode: 500,
-        headers: {},
+        headers: {
+          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
+        },
         body: JSON.stringify({ err: err })
       }
       callback(null, response)
@@ -97,6 +105,9 @@ module.exports.getUser = (event, context, callback) => {
     .then(function(row) {
       callback(null, {
         statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
+        },
         body: JSON.stringify(Object.assign({}, row))
       })
       pg.destroy()
@@ -105,6 +116,9 @@ module.exports.getUser = (event, context, callback) => {
       console.log('get.fail', err)
       var response = {
         statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
+        },
         body: err
       }
       callback(null, response)

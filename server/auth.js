@@ -125,7 +125,8 @@ function getSuccessResponse(user) {
   var response = {
     statusCode: 200,
     headers: {
-      'X-JWT-TOKEN': token
+      'X-JWT-TOKEN': token,
+      'Access-Control-Allow-Origin': '*' // Required for CORS support to work
     },
     body: JSON.stringify({ jwt: token })
   }
@@ -137,7 +138,9 @@ function getFailureResponse(error) {
   // do something pretty here
   var response = {
     statusCode: 400,
-    headers: {},
+    headers: {
+      'Access-Control-Allow-Origin': '*' // Required for CORS support to work
+    },
     body: JSON.stringify(error)
   }
   return response

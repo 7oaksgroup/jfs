@@ -2,7 +2,6 @@
 export default {
   name: 'app',
   beforeCreate() {
-    console.log(process.env.API_URL)
     this.$store.dispatch('loadUser')
     const friend = this.$route.query.friend || localStorage.getItem('friend')
     if (friend) {
