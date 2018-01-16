@@ -52,7 +52,7 @@ module.exports.facebook = (event, context, callback) => {
         }
 
         var url =
-          'https://graph.facebook.com/me?fields=id,name,email,picture&access_token=' +
+          'https://graph.facebook.com/me?fields=id,name,email,picture,friends&access_token=' +
           access_token
 
         https
@@ -101,10 +101,7 @@ module.exports.facebook = (event, context, callback) => {
                 .then(function(rows) {
                   callback(
                     null,
-                    getSuccessResponse(
-                      Object.assign({}, rows[0]),
-                      process.env.appUrl
-                    )
+                    getSuccessResponse(Object.assign({}, rows[0]), json)
                   )
                   pg.destroy()
                 })
@@ -120,7 +117,7 @@ module.exports.facebook = (event, context, callback) => {
   }
 }
 
-function getSuccessResponse(user) {
+function getSuccessResponse(user, extra) {
   var token = jwt.sign(user, 'SUPER SECRET KEY')
   var response = {
     statusCode: 200,
@@ -128,7 +125,7 @@ function getSuccessResponse(user) {
       'X-JWT-TOKEN': token,
       'Access-Control-Allow-Origin': '*' // Required for CORS support to work
     },
-    body: JSON.stringify({ jwt: token })
+    body: JSON.stringify({ jwt: token, extra: extra })
   }
   return response
 }

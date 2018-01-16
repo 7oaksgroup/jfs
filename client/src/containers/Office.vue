@@ -1,13 +1,14 @@
 <template>
   <div class="facebook">
     <Header></Header>
-    <h1>Welcome, {{currentUser.firstName}}</h1>
+    <h1>Welcome, {{firstName}}!</h1>
+    <img width="75" height="75" :src="currentUser.avatar_url"/>
     <br/>
     <div class="box">
       <h3>Share Link</h3>
       <p>User this link to share this community with others!</p>
-      <p>{{shareUrl}}</p>
-      <p>{{safeShareUrl}}</p>
+      <input type="text" v-model="shareUrl" readonly/>
+      <input type="text" v-model="safeShareUrl" readonly/>
     </div>
     <div class="box">
       <h3>Facebook Group</h3>
@@ -27,12 +28,15 @@ export default {
   components: {
     Header
   },
-  async beforeCreate() {
+  mounted() {
     if (!this.$store.getters.isLoggedIn) {
       this.$router.push('/')
     }
   },
   computed: {
+    firstName() {
+      return this.$store.getters.firstName
+    },
     ...mapState({
       currentUser: state => state.currentUser,
       shareUrl: state =>
@@ -46,5 +50,23 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+h1,
+h3,
+p {
+  font-family: Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Book Antiqua',
+    Georgia, serif;
+  font-style: italic;
+}
+img {
+  border-radius: 100%;
+}
 
+input {
+  border: 1px solid #ff69b4;
+  text-align: center;
+  padding: 10px 5px;
+  width: 100%;
+  max-width: 600px;
+  font-size: 16px;
+}
 </style>

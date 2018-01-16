@@ -125,3 +125,38 @@ module.exports.getUser = (event, context, callback) => {
       pg.destroy()
     })
 }
+
+module.exports.facebookFriends = (event, context, callback) => {
+  const ids = event.queryStringParameters.ids
+  const facebookIds = ids.split(',')
+
+  var pg = require('knex')({
+    client: 'pg',
+    connection: process.env.dbUrl
+  })
+  pg('prelaunch.registration')
+    .select()
+    .whereIn('facebook_id', facebookIds)
+    .then(function(rows) {
+      callback(null, {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
+        },
+        body: JSON.stringify(rows)
+      })
+      pg.destroy()
+    })
+    .catch(function(err) {
+      console.log('get.fail', err)
+      var response = {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
+        },
+        body: err
+      }
+      callback(null, response)
+      pg.destroy()
+    })
+}

@@ -3,49 +3,17 @@
     <div class="content">
       <div class="backdrop">
         <h1>
-          <span class="break">If you are here,</span>
-          <span>you know why.</span>
+          <span class="break">Nothing here,</span>
+          <span>Please move along!</span>
         </h1>
-      </div>
-      <div v-if="!isRegistered">
-        <Button href="/login/facebook">{{action}}</Button>
-      </div>
-      <div v-if="isRegistered">
-        <Button href="/office">{{office}}</Button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import Button from '@/components/Button'
-
 export default {
-  name: 'Home',
-  components: {
-    Button
-  },
-  data() {
-    return {
-      action: 'get started',
-      office: 'visit my office'
-    }
-  },
-  methods: {
-    register(e) {
-      e.preventDefault()
-      this.$store.dispatch('register')
-    }
-  },
-  computed: {
-    ...mapState({
-      currentUser: state => state.currentUser
-    }),
-    isRegistered() {
-      return this.$store.getters.isRegistered
-    }
-  }
+  name: 'NotFound'
 }
 </script>
 

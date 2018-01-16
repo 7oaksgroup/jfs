@@ -35,12 +35,22 @@ const actions = {
     const raw = Base64.decode(response.data.jwt.split('.')[1])
     const user = JSON.parse(raw)
     commit('updateUser', user)
+    if (
+      response.data.extra.friends &&
+      response.data.extra.friends.data.length > 0
+    ) {
+      localStorage.setItem(
+        'facebookFriends',
+        JSON.stringify(response.data.extra.friends.data)
+      )
+    }
   },
   async loadUser({ commit }) {
     const jwt = localStorage.getItem('jwt')
     if (jwt) {
       const raw = Base64.decode(jwt.split('.')[1])
       const parsed = JSON.parse(raw)
+      commit('updateUser', parsed)
       const user = await UsersApi.get(parsed.id)
       commit('updateUser', user.data)
     }
@@ -49,6 +59,16 @@ const actions = {
     localStorage.setItem('friend', friend)
     commit('updateUser', { friend })
   },
+  clearStorage() {
+    localStorage.removeItem('facebookFriends')
+    localStorage.removeItem('friend')
+  },
+  async showFacebookFriends({ commit }) {
+    const facebookFriends = JSON.parse(localStorage.getItem('facebookFriends'))
+    const friendIds = facebookFriends.map(ff => ff.id)
+    const response = await UsersApi.getFacebookFriends(friendIds)
+    commit('addFriends', response.data)
+  },
   async search({ commit }, searchName) {
     const response = await UsersApi.search(searchName)
     commit('addFriends', response.data)
@@ -56,9 +76,20 @@ const actions = {
 }
 
 const getters = {
-  firstName: state => state.currentUser.name,
+  firstName: state =>
+    state.currentUser.firstName || state.currentUser.first_name,
   isLoggedIn: state => {
     if (state.currentUser.id && state.currentUser.facebook_id) {
+      return true
+    }
+    return false
+  },
+  isRegistered: state => {
+    if (
+      state.currentUser.id &&
+      state.currentUser.facebook_id &&
+      state.currentUser.postal_code
+    ) {
       return true
     }
     return false

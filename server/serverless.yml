@@ -58,3 +58,11 @@ functions:
               paths:
                 id: true
     environment: ${file(env.yaml):${self:custom.stage}}
+  facebookFriends:
+    handler: jfs.facebookFriends
+    events: 
+      - http:
+          path: prelaunch/friends
+          method: get
+          cors: true
+    environment: ${file(env.yaml):${self:custom.stage}}

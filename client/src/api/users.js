@@ -3,7 +3,6 @@ import axios from 'axios'
 const api = axios.create({
   baseURL: process.env.API_URL
 })
-console.log('I found this', process.env)
 
 export default {
   register: user => {
@@ -17,5 +16,8 @@ export default {
   },
   get: id => {
     return api.get(`/prelaunch/user/${id}`)
+  },
+  getFacebookFriends: ids => {
+    return api.get(`/prelaunch/friends?ids=${ids.join(',')}`)
   }
 }

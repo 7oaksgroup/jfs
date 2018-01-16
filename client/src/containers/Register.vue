@@ -41,6 +41,7 @@ export default {
     async register(e) {
       e.preventDefault()
       await this.$store.dispatch('register')
+      this.$store.dispatch('clearStorage')
       this.$router.push('/office')
     }
   },
@@ -55,6 +56,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .container {
+  padding: 25px;
   text-align: center;
 }
 .image {
@@ -77,6 +79,9 @@ export default {
 }
 
 @media (max-width: 850px) {
+  .container {
+    padding: 0;
+  }
   .image {
     height: 100vh;
     width: 100vw;
