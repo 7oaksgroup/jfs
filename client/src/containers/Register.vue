@@ -32,6 +32,11 @@ export default {
   beforeCreate() {
     if (!this.$store.getters.isLoggedIn) {
       this.$router.push('/')
+      return
+    }
+    if (this.$store.getters.isRegistered) {
+      this.$router.push('/office')
+      return
     }
     if (!this.$store.getters.getInviteCode) {
       this.$router.push('/findfriend')

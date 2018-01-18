@@ -3,6 +3,7 @@ import axios from 'axios'
 const api = axios.create({
   baseURL: process.env.API_URL
 })
+
 const jwt = localStorage.getItem('jwt')
 api.defaults.headers.common['Authorization'] = `Bearer ${jwt}`
 
@@ -24,5 +25,9 @@ export default {
   },
   getInfluence: () => {
     return api.get('/prelaunch/influence')
+  },
+  updateJwt: () => {
+    const jwt = localStorage.getItem('jwt')
+    api.defaults.headers.common['Authorization'] = `Bearer ${jwt}`
   }
 }

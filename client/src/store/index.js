@@ -27,6 +27,9 @@ const mutations = {
   addInfluence(state, data) {
     state.influence = data.influence
     state.count = data.count
+  },
+  logout(state) {
+    state.currentUser = {}
   }
 }
 
@@ -69,6 +72,11 @@ const actions = {
     localStorage.removeItem('facebookFriends')
     localStorage.removeItem('inviteCode')
   },
+  logout({ dispatch, commit }) {
+    dispatch('clearStorage')
+    localStorage.removeItem('jwt')
+    commit('logout')
+  },
   async checkInviteCode({ commit, dispatch }, id) {
     const user = await UsersApi.get(id)
     if (user.data.id) {
@@ -87,6 +95,7 @@ const actions = {
     commit('addFriends', response.data)
   },
   async getInfluence({ commit }) {
+    await UsersApi.updateJwt()
     const response = await UsersApi.getInfluence()
     commit('addInfluence', response.data)
   }

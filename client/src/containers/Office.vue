@@ -1,6 +1,8 @@
 <template>
   <div class="facebook">
-    <Header></Header>
+    <Header>
+      <a @click="logout">Logout</a>
+    </Header>
     <h1>Welcome, {{firstName}}!</h1>
     <img width="75" height="75" :src="currentUser.avatar_url"/>
     <br/>
@@ -42,8 +44,15 @@ export default {
   mounted() {
     if (!this.$store.getters.isLoggedIn) {
       this.$router.push('/')
+      return
     }
     this.$store.dispatch('getInfluence')
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('logout')
+      this.$router.push('/')
+    }
   },
   computed: {
     firstName() {
@@ -81,5 +90,9 @@ input {
   width: 100%;
   max-width: 600px;
   font-size: 16px;
+}
+
+a {
+  cursor: pointer;
 }
 </style>

@@ -4,6 +4,9 @@
       <div class="logo">
         JustForStylists
       </div>
+      <div class="menu">
+        <slot></slot>
+      </div>
     </div>
   </div>
 </template>
@@ -38,5 +41,10 @@ export default {
   padding: 22px 45px;
   font-weight: 700;
   font-size: 18px;
+}
+.menu {
+  position: absolute;
+  right: 20px;
+  top: 20px;
 }
 </style>
