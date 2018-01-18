@@ -3,9 +3,10 @@ export default {
   name: 'app',
   beforeCreate() {
     this.$store.dispatch('loadUser')
-    const friend = this.$route.query.friend || localStorage.getItem('friend')
-    if (friend) {
-      this.$store.dispatch('saveFriend', friend)
+    const inviteCode =
+      this.$route.query.inviteCode || localStorage.getItem('inviteCode')
+    if (inviteCode) {
+      this.$store.dispatch('saveInviteCode', inviteCode)
     }
   },
   render() {

@@ -118,11 +118,10 @@ module.exports.facebook = (event, context, callback) => {
 }
 
 function getSuccessResponse(user, extra) {
-  var token = jwt.sign(user, 'SUPER SECRET KEY')
+  var token = jwt.sign(user, process.env.jwtKey)
   var response = {
     statusCode: 200,
     headers: {
-      'X-JWT-TOKEN': token,
       'Access-Control-Allow-Origin': '*' // Required for CORS support to work
     },
     body: JSON.stringify({ jwt: token, extra: extra })

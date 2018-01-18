@@ -1,162 +1,157 @@
 'use strict'
 
-module.exports.root = (event, context, callback) => {
-  callback(null, {
-    statusCode: 200,
-    headers: {},
-    body: JSON.stringify({ message: 'ok' })
-  })
+const middy = require('middy')
+const createErr = require('http-errors')
+const {
+  urlEncodeBodyParser,
+  httpErrorHandler,
+  cors
+} = require('middy/middlewares')
+var jwt = require('jsonwebtoken')
+
+const { Pool } = require('pg')
+
+const pool = new Pool({
+  connectionString: process.env.dbUrl
+})
+
+const databaseMiddleware = config => ({
+  before: async (handler, next) => {
+    handler.context.db = await pool.connect()
+    next()
+  },
+  after: (handler, next) => {
+    handler.context.db.release(true)
+    next()
+  }
+})
+
+// Should be added last in the chain (so closest on the onion)
+const detectingResponseType = (config = {}) => ({
+  after: (handler, next) => {
+    // handler.response has our value
+    let value = handler.response
+
+    if (value === null) {
+      value = {
+        statusCode: 404,
+        body: {
+          message: 'Not found'
+        }
+      }
+    } else {
+      value = {
+        statusCode: config.statusCode || 200,
+        body: JSON.stringify(value)
+      }
+    }
+
+    handler.response = value
+    next()
+  }
+})
+
+const curry = fn => {
+  return middy(fn)
+    .use(urlEncodeBodyParser())
+    .use(cors())
+    .use(databaseMiddleware())
+    .use(httpErrorHandler())
+    .use(detectingResponseType())
 }
 
-module.exports.register = (event, context, callback) => {
-  const body = JSON.parse(event.body)
-  var pg = require('knex')({
-    client: 'pg',
-    connection: process.env.dbUrl
-  })
-  pg('prelaunch.registration')
-    .select('id')
-    .where({ email: body.friend })
-    .orWhere(pg.raw('id::varchar = ?', [body.friend]))
-    .first()
-    .then(row => {
-      pg('prelaunch.registration')
-        .where({ id: body.id })
-        .update({
-          first_name: body.firstName,
-          last_name: body.lastName,
-          email: body.email,
-          avatar_url: body.facebook_avatar,
-          postal_code: body.zip,
-          sponsor_id: row.id
-        })
-        .returning('*')
-        .then(function(rows) {
-          var response = {
-            statusCode: 200,
-            headers: {
-              'Access-Control-Allow-Origin': '*' // Required for CORS support to work
-            },
-            body: JSON.stringify(Object.assign({}, rows[0]))
-          }
-          callback(null, response)
-          pg.destroy()
-        })
-        .catch(function(err) {
-          var response = {
-            statusCode: 500,
-            headers: {
-              'Access-Control-Allow-Origin': '*' // Required for CORS support to work
-            },
-            body: JSON.stringify({ err: err })
-          }
-          callback(null, response)
-          pg.destroy()
-        })
-    })
-}
+module.exports.root = curry((event, context, callback) => {
+  callback(null, { message: 'ok' })
+})
 
-module.exports.search = (event, context, callback) => {
+module.exports.register = curry(async (event, context, callback) => {
+  const {
+    inviteCode,
+    firstName,
+    lastName,
+    email,
+    facebook_avatar,
+    zip
+  } = JSON.parse(event.body)
+
+  const friendQuery = {
+    text: 'SELECT * FROM prelaunch.registration where email = $1 OR id::varchar = $1',
+    values: [inviteCode]
+  }
+  const friendResponse = await context.db.query(friendQuery)
+  console.log(friendQuery, friendResponse)
+  if (!friendResponse.rows[0]) {
+    callback(createErr(400, 'Invite Code was not valid.'))
+  }
+  const friendId = friendResponse.rows[0].id
+
+  const registerQuery = {
+    text: `UPDATE
+      prelaunch.registration
+      SET first_name = $1, last_name = $2, email = $3, avatar_url = $4, postal_code = $5, sponsor_id = $6 
+      WHERE facebook_email = $3`,
+    values: [firstName, lastName, email, facebook_avatar, zip, friendId]
+  }
+  await context.db.query(registerQuery)
+
+  const getQuery = {
+    text: 'SELECT * FROM prelaunch.registration where email = $1',
+    values: [email]
+  }
+  const getResponse = await context.db.query(getQuery)
+
+  callback(null, getResponse.rows[0])
+})
+
+module.exports.search = curry(async (event, context, callback) => {
   const name = event.queryStringParameters.name
+  const searchQuery = {
+    text: 'SELECT * FROM prelaunch.registration WHERE lower(first_name) like %$1% OR lower(last_name) %$1%',
+    values: [name.toLowerCase()]
+  }
+  const searchResponse = await context.db.query(searchQuery)
+  callback(null, searchResponse.rows[0])
+})
 
-  var pg = require('knex')({
-    client: 'pg',
-    connection: process.env.dbUrl
-  })
-  pg('prelaunch.registration')
-    .select()
-    .where('first_name', 'like', '%' + name + '%')
-    .orWhere('last_name', 'like', '%' + name + '%')
-    .then(function(rows) {
-      var response = {
-        statusCode: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
-        },
-        body: JSON.stringify(Object.assign({}, rows[0]))
-      }
-      callback(null, response)
-      pg.destroy()
-    })
-    .catch(function(err) {
-      var response = {
-        statusCode: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
-        },
-        body: JSON.stringify({ err: err })
-      }
-      callback(null, response)
-      pg.destroy()
-    })
-}
-
-module.exports.getUser = (event, context, callback) => {
+module.exports.getUser = curry(async (event, context, callback) => {
   const id = event.pathParameters.id
+  const userQuery = {
+    text: 'SELECT * FROM prelaunch.registration where id = $1',
+    values: [id]
+  }
+  const userResponse = await context.db.query(userQuery)
+  callback(null, userResponse.rows[0])
+})
 
-  var pg = require('knex')({
-    client: 'pg',
-    connection: process.env.dbUrl
-  })
-  pg('prelaunch.registration')
-    .select()
-    .where({ id: id })
-    .first()
-    .then(function(row) {
-      callback(null, {
-        statusCode: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
-        },
-        body: JSON.stringify(Object.assign({}, row))
-      })
-      pg.destroy()
-    })
-    .catch(function(err) {
-      console.log('get.fail', err)
-      var response = {
-        statusCode: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
-        },
-        body: err
-      }
-      callback(null, response)
-      pg.destroy()
-    })
-}
-
-module.exports.facebookFriends = (event, context, callback) => {
+module.exports.facebookFriends = curry(async (event, context, callback) => {
   const ids = event.queryStringParameters.ids
   const facebookIds = ids.split(',')
+  const friendQuery = {
+    text: 'SELECT * FROM prelaunch.registration WHERE facebook_id IN $1',
+    values: [facebookIds]
+  }
+  const friendResponse = await context.db.query(friendQuery)
+  callback(null, friendResponse.rows)
+})
 
-  var pg = require('knex')({
-    client: 'pg',
-    connection: process.env.dbUrl
+module.exports.influence = curry(async (event, context, callback) => {
+  const { Authorization } = event.headers
+  const token = Authorization.split(' ')[1]
+  const decoded = jwt.verify(token, process.env.jwtKey)
+  const influenceQuery = {
+    text: `select d.*
+      from prelaunch.genealogy d
+      inner join prelaunch.genealogy target on target.id = $1
+      where d.path[target.depth] = target.id
+        and d.id != target.id`,
+    values: [decoded.id]
+  }
+  const response = await context.db.query(influenceQuery)
+  const countResponse = await context.db.query(
+    `SELECT COUNT(id) FROM prelaunch.registration`
+  )
+  callback(null, {
+    influence: response.rows,
+    count: countResponse.rows[0].count
   })
-  pg('prelaunch.registration')
-    .select()
-    .whereIn('facebook_id', facebookIds)
-    .then(function(rows) {
-      callback(null, {
-        statusCode: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
-        },
-        body: JSON.stringify(rows)
-      })
-      pg.destroy()
-    })
-    .catch(function(err) {
-      console.log('get.fail', err)
-      var response = {
-        statusCode: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*' // Required for CORS support to work
-        },
-        body: err
-      }
-      callback(null, response)
-      pg.destroy()
-    })
-}
+})

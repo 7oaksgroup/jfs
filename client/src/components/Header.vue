@@ -1,8 +1,8 @@
 <template>
-  <div class="header">
+  <div class="header" :class="{ reverse: reverse }">
     <div class="container">
       <div class="logo">
-        JustStylists
+        JustForStylists
       </div>
     </div>
   </div>
@@ -10,7 +10,13 @@
 
 <script>
 export default {
-  name: 'Header'
+  name: 'Header',
+  props: {
+    reverse: {
+      default: false,
+      type: Boolean
+    }
+  }
 }
 </script>
 
@@ -21,6 +27,11 @@ export default {
   height: 65px;
   text-align: left;
   border-bottom: 1px solid black;
+}
+.header.reverse {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-bottom: none;
 }
 .logo {
   font-style: italic;

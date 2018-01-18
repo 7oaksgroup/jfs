@@ -33,7 +33,7 @@ export default {
     if (!this.$store.getters.isLoggedIn) {
       this.$router.push('/')
     }
-    if (!this.$store.getters.getFriend) {
+    if (!this.$store.getters.getInviteCode) {
       this.$router.push('/findfriend')
     }
   },

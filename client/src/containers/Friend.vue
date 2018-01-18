@@ -12,10 +12,17 @@
     <p>Search for one of your facebook friends that is already part of the facebook community.</p>
     <a class="button" @click="showFriends">Show Facebook Friends</a>
 
+    <h4>Have an invite code?</h4>
+    <p>Please enter your invite code.</p>
+    <p v-if="errorCode" class="error">Please enter a valid invite code</p>
+    <input type="text" v-model="inviteCode" placeholder="Invite Code" />
+    <a class="button" @click="checkInviteCode">Enter Code</a>
+
     <h4>Search by name</h4>
     <p>Enter the first or last name of a friend to search for someone you may know.</p>
     <input type="text" v-model="searchName" placeholder="Friend's Name" />
-    <a class="button" @click="searchFriend">Enter Name</a>
+    <a class="button" @click="searchFriend">Search Name</a>
+
     <div class="container">
       <div class="flex">
         <div v-for="friend in friends" :key="friend.id" @click="setFriend(friend.id)">
@@ -39,7 +46,9 @@ export default {
   },
   data() {
     return {
-      searchName: ''
+      searchName: '',
+      inviteCode: '',
+      errorCode: false
     }
   },
   methods: {
@@ -50,8 +59,17 @@ export default {
       await this.$store.dispatch('search', this.searchName)
     },
     async setFriend(id) {
-      this.$store.dispatch('saveFriend', id)
+      this.$store.dispatch('saveInviteCode', id)
       this.$router.push('/register')
+    },
+    async checkInviteCode() {
+      this.errorCode = false
+      await this.$store.dispatch('checkInviteCode', this.inviteCode)
+      if (this.$store.state.currentUser.inviteCode) {
+        this.$router.push('/register')
+      } else {
+        this.errorCode = true
+      }
     }
   },
   computed: {
@@ -81,6 +99,13 @@ input {
   height: 25px;
   margin: 15px auto;
   padding-left: 10px;
+}
+.error + input {
+  border: 1px solid red;
+}
+.error {
+  color: red;
+  font-weight: bold;
 }
 .flex {
   display: flex;

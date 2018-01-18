@@ -3,6 +3,8 @@ import axios from 'axios'
 const api = axios.create({
   baseURL: process.env.API_URL
 })
+const jwt = localStorage.getItem('jwt')
+api.defaults.headers.common['Authorization'] = `Bearer ${jwt}`
 
 export default {
   register: user => {
@@ -19,5 +21,8 @@ export default {
   },
   getFacebookFriends: ids => {
     return api.get(`/prelaunch/friends?ids=${ids.join(',')}`)
+  },
+  getInfluence: () => {
+    return api.get('/prelaunch/influence')
   }
 }

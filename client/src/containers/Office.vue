@@ -6,14 +6,23 @@
     <br/>
     <div class="box">
       <h3>Share Link</h3>
-      <p>User this link to share this community with others!</p>
-      <input type="text" v-model="shareUrl" readonly/>
+      <p>Use this link to share this community with others!</p>
       <input type="text" v-model="safeShareUrl" readonly/>
     </div>
     <div class="box">
       <h3>Facebook Group</h3>
       <p>Please join our facebook group!</p>
-      <p>link to facebook</p>
+      <Button href="https://www.facebook.com/groups/142418766393701/">Join Facebook Group</Button>
+    </div>
+    <div class="box">
+      <h3>Community Size: {{count}}</h3>
+    </div>
+    <div class="box">
+      <h3>Your circle of influence</h3>
+      <div v-for="stylist in influence" :key="stylist.id">
+        <p>{{stylist.first_name}}{{stylist.last_name}}</p>
+        <img width="75" height="75" :src="stylist.avatar_url"/>
+      </div>
     </div>
   </div>
 </template>
@@ -22,16 +31,19 @@
 <script>
 import { mapState } from 'vuex'
 import Header from '@/components/Header'
+import Button from '@/components/Button'
 
 export default {
   name: 'Office',
   components: {
+    Button,
     Header
   },
   mounted() {
     if (!this.$store.getters.isLoggedIn) {
       this.$router.push('/')
     }
+    this.$store.dispatch('getInfluence')
   },
   computed: {
     firstName() {
@@ -39,10 +51,11 @@ export default {
     },
     ...mapState({
       currentUser: state => state.currentUser,
-      shareUrl: state =>
-        `${window.location.origin}/invite?friend=${state.currentUser.email}`,
       safeShareUrl: state =>
-        `${window.location.origin}/invite?friend=${state.currentUser.id}`
+        `${window.location.origin}/invite?inviteCode=${state.currentUser.id}`,
+      inviteCode: state => state.inviteCode,
+      count: state => state.count,
+      influence: state => state.influence
     })
   }
 }

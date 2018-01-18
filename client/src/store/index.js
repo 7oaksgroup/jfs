@@ -8,7 +8,9 @@ Vue.use(Vuex)
 
 const state = {
   currentUser: {},
-  friends: []
+  friends: [],
+  count: 0,
+  influence: []
 }
 
 const mutations = {
@@ -21,13 +23,17 @@ const mutations = {
     } else {
       state.friends = [friends]
     }
+  },
+  addInfluence(state, data) {
+    state.influence = data.influence
+    state.count = data.count
   }
 }
 
 const actions = {
   async register({ commit, state }) {
     const response = await UsersApi.register(state.currentUser)
-    commit('updateUser', response)
+    commit('updateUser', response.data)
   },
   async facebookConnect({ commit, state }, { search }) {
     const response = await UsersApi.facebookConnect(search)
@@ -55,13 +61,20 @@ const actions = {
       commit('updateUser', user.data)
     }
   },
-  saveFriend({ commit }, friend) {
-    localStorage.setItem('friend', friend)
-    commit('updateUser', { friend })
+  saveInviteCode({ commit }, inviteCode) {
+    localStorage.setItem('inviteCode', inviteCode)
+    commit('updateUser', { inviteCode })
   },
   clearStorage() {
     localStorage.removeItem('facebookFriends')
-    localStorage.removeItem('friend')
+    localStorage.removeItem('inviteCode')
+  },
+  async checkInviteCode({ commit, dispatch }, id) {
+    const user = await UsersApi.get(id)
+    if (user.data.id) {
+      commit('updateUser', { inviteCode: user.data.id })
+      dispatch('saveInviteCode', user.data.id)
+    }
   },
   async showFacebookFriends({ commit }) {
     const facebookFriends = JSON.parse(localStorage.getItem('facebookFriends'))
@@ -72,6 +85,10 @@ const actions = {
   async search({ commit }, searchName) {
     const response = await UsersApi.search(searchName)
     commit('addFriends', response.data)
+  },
+  async getInfluence({ commit }) {
+    const response = await UsersApi.getInfluence()
+    commit('addInfluence', response.data)
   }
 }
 
@@ -94,7 +111,8 @@ const getters = {
     }
     return false
   },
-  getFriend: state => state.currentUser.friend || localStorage.getItem('friend')
+  getInviteCode: state =>
+    state.currentUser.inviteCode || localStorage.getItem('inviteCode')
 }
 
 export default new Vuex.Store({

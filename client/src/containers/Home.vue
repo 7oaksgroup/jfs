@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <Header :reverse="true"></Header>
     <div class="content">
       <div class="backdrop">
         <h1>
@@ -20,16 +21,18 @@
 <script>
 import { mapState } from 'vuex'
 import Button from '@/components/Button'
+import Header from '@/components/Header'
 
 export default {
   name: 'Home',
   components: {
-    Button
+    Button,
+    Header
   },
   data() {
     return {
       action: 'get started',
-      office: 'visit my office'
+      office: 'Enter'
     }
   },
   methods: {
@@ -58,7 +61,7 @@ h1 {
   color: white;
 }
 .home {
-  background: url('../assets/homepage.jpg') center center no-repeat;
+  background: url('../assets/salon.jpg') center left no-repeat;
   background-size: cover;
   height: 100vh;
   width: 100vw;

@@ -2,8 +2,10 @@ service: lambda-facebook-oauth
 
 plugins:
   - serverless-offline
+  - serverless-webpack
 
 custom:
+  webpackIncludeModules: true
   stage: "${opt:stage, self:provider.stage}"
 
 provider:
@@ -63,6 +65,14 @@ functions:
     events: 
       - http:
           path: prelaunch/friends
+          method: get
+          cors: true
+    environment: ${file(env.yaml):${self:custom.stage}}
+  influence:
+    handler: jfs.influence
+    events: 
+      - http:
+          path: prelaunch/influence
           method: get
           cors: true
     environment: ${file(env.yaml):${self:custom.stage}}
