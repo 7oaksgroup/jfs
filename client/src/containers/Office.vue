@@ -189,6 +189,7 @@ p.bold {
 }
 .arc.top {
   transform: rotate(45deg) skewX(30deg);
+  animation: rotate-top 60s infinite linear;
 }
 .arc.top.shadow {
   transform: rotate(44deg) skewX(29deg);
@@ -196,6 +197,7 @@ p.bold {
 }
 .arc.top2 {
   transform: rotate(93deg) skewX(30deg);
+  animation: rotate-top2 60s infinite linear;
 }
 .arc.top2.shadow {
   transform: rotate(92deg) skewX(29deg);
@@ -203,6 +205,7 @@ p.bold {
 }
 .arc.bottom {
   transform: rotate(-150deg) skewX(30deg);
+  animation: rotate-bottom 60s infinite linear;
 }
 .arc.bottom.shadow {
   transform: rotate(-150deg) skewX(31deg);
@@ -223,5 +226,31 @@ p.bold {
 .avatar {
   border-radius: 100%;
   border: 4px solid #ff69b4;
+}
+
+@keyframes rotate-bottom {
+  0% {
+    transform: rotate(-150deg) skewX(30deg);
+  }
+  100% {
+    transform: rotate(210deg) skewX(30deg);
+  }
+}
+
+@keyframes rotate-top {
+  0% {
+    transform: rotate(45deg) skewX(30deg);
+  }
+  100% {
+    transform: rotate(-316deg) skewX(30deg);
+  }
+}
+@keyframes rotate-top2 {
+  0% {
+    transform: rotate(93deg) skewX(30deg);
+  }
+  100% {
+    transform: rotate(-268deg) skewX(30deg);
+  }
 }
 </style>
