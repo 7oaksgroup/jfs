@@ -151,10 +151,10 @@ p.bold {
   display: flex;
   align-items: center;
   box-shadow: 0px 1px 1px 1px #ababab;
+  flex-wrap: wrap;
 }
 .banner > div {
   flex: 1;
-  min-width: 400px;
 }
 .circle {
   position: relative;
