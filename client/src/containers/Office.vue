@@ -215,6 +215,7 @@ p.bold {
 }
 .influence {
   display: flex;
+  flex-wrap: wrap;
 }
 .influence > div {
   flex: 1;
