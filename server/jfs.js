@@ -135,7 +135,7 @@ module.exports.facebookFriends = curry(async (event, context, callback) => {
   const ids = event.queryStringParameters.ids
   const facebookIds = ids.split(',')
   const friendQuery = {
-    text: 'SELECT * FROM prelaunch.registration WHERE facebook_id IN ($1)',
+    text: 'SELECT * FROM prelaunch.registration WHERE facebook_id = any($1)',
     values: [facebookIds]
   }
   const friendResponse = await context.db.query(friendQuery)
