@@ -8,7 +8,7 @@
       <div class="main-avatar">
         <img width="100" height="100" :src="avatar"/>
       </div>
-      <p class="bold">Do you know other beauty professionals that would love to be a part of the Just Stylsust Community? 
+      <p class="bold">Do you know other beauty professionals that would love to be a part of the Just For Stylists Community? 
       Expand your circle of influence by sharing the invite link below:</p>
       <div class="share-link">
         <input type="text" v-model="safeShareUrl" readonly/>
@@ -16,8 +16,8 @@
     </div>
     <div class="box">
       <p class="italics">Want more ways to stay connected and contribute to our growing community?</p>
-      <p class="bold">Join the facebook group!</p>
-      <Button href="https://www.facebook.com/groups/142418766393701/">Just for Stylists on Facebook</Button>
+      <p class="bold">Join our Exclusive Facebook Group!</p>
+      <Button href="https://www.facebook.com/groups/142418766393701/">Just For Stylists on Facebook</Button>
     </div>
     <div class="banner">
       <div>
@@ -36,7 +36,8 @@
       </div>
     </div>
     <div class="box">
-      <p class="bold">Your circle of influence</p>
+      <p class="bold">Your Circle of Influence: {{influenceCount}}</p>
+      <p>Share your link with other beauty professionals and come back here to watch your Circle of Influence grow!</p>
       <div class="influence">
         <div v-for="stylist in influence" :key="stylist.id">
           <p>{{stylist.first_name}}{{stylist.last_name}}</p>
@@ -83,6 +84,7 @@ export default {
       inviteCode: state => state.inviteCode,
       count: state => state.count,
       influence: state => state.influence,
+      influenceCount: state => state.influence.length,
       avatar: state =>
         `http://graph.facebook.com/${
           state.currentUser.facebook_id
