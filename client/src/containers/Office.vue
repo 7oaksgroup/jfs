@@ -41,7 +41,7 @@
       <div class="influence">
         <div v-for="stylist in influence" :key="stylist.id">
           <p>{{stylist.first_name}}{{stylist.last_name}}</p>
-          <img class="avatar" width="75" height="75" :src="stylist.avatar_url"/>
+          <img class="avatar" width="75" height="75" :src="`https://graph.facebook.com/${stylist.facebook_id}/picture?type=large`"/>
         </div>
       </div>
     </div>
@@ -86,7 +86,7 @@ export default {
       influence: state => state.influence,
       influenceCount: state => state.influence.length,
       avatar: state =>
-        `http://graph.facebook.com/${
+        `https://graph.facebook.com/${
           state.currentUser.facebook_id
         }/picture?type=large`
     })

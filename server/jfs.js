@@ -107,7 +107,7 @@ module.exports.register = curry(async (event, context, callback) => {
 
 module.exports.search = curry(async (event, context, callback) => {
   const name = event.queryStringParameters.name
-  const query = `%${name}%`
+  const query = `%${name.toLowerCase()}%`
   const searchResponse = await context.db.query(
     SQL(
       `
@@ -118,7 +118,7 @@ module.exports.search = curry(async (event, context, callback) => {
       query
     })
   )
-  callback(null, searchResponse.rows[0])
+  callback(null, searchResponse.rows)
 })
 
 module.exports.getUser = curry(async (event, context, callback) => {
