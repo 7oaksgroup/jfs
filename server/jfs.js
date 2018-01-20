@@ -1,10 +1,7 @@
 'use strict'
 
-
-
 const { prettyErrorHandler } = require('./middleware')
 const SQL = require('yesql').pg
-
 
 const middy = require('middy')
 const createErr = require('http-errors')
@@ -111,12 +108,16 @@ module.exports.register = curry(async (event, context, callback) => {
 module.exports.search = curry(async (event, context, callback) => {
   const name = event.queryStringParameters.name
   const query = `%${name}%`
-  const searchResponse = await context.db.query(SQL(`
+  const searchResponse = await context.db.query(
+    SQL(
+      `
     SELECT * FROM prelaunch.registration 
     WHERE lower(first_name) like :query OR lower(last_name) like :query
-  `)({
-    query
-  }))
+  `
+    )({
+      query
+    })
+  )
   callback(null, searchResponse.rows[0])
 })
 
@@ -134,7 +135,7 @@ module.exports.facebookFriends = curry(async (event, context, callback) => {
   const ids = event.queryStringParameters.ids
   const facebookIds = ids.split(',')
   const friendQuery = {
-    text: 'SELECT * FROM prelaunch.registration WHERE facebook_id IN $1',
+    text: 'SELECT * FROM prelaunch.registration WHERE facebook_id IN ($1)',
     values: [facebookIds]
   }
   const friendResponse = await context.db.query(friendQuery)
