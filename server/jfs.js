@@ -1,5 +1,11 @@
 'use strict'
 
+
+
+const { prettyErrorHandler } = require('./middleware')
+const SQL = require('yesql').pg
+
+
 const middy = require('middy')
 const createErr = require('http-errors')
 const {
@@ -50,10 +56,6 @@ const detectingResponseType = (config = {}) => ({
     next()
   }
 })
-
-const { prettyErrorHandler } = require('./middleware')
-const SQL = require('yesql').pg
-
 const curry = fn => {
   return middy(fn)
     .use(cors())
