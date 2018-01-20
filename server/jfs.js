@@ -51,12 +51,15 @@ const detectingResponseType = (config = {}) => ({
   }
 })
 
+const { prettyErrorHandler } = require('./middleware')
+const SQL = require('yesql').pg
+
 const curry = fn => {
   return middy(fn)
-    .use(urlEncodeBodyParser())
     .use(cors())
+    .use(prettyErrorHandler())
+    .use(urlEncodeBodyParser())
     .use(databaseMiddleware())
-    .use(httpErrorHandler())
     .use(detectingResponseType())
 }
 
@@ -105,11 +108,13 @@ module.exports.register = curry(async (event, context, callback) => {
 
 module.exports.search = curry(async (event, context, callback) => {
   const name = event.queryStringParameters.name
-  const searchQuery = {
-    text: 'SELECT * FROM prelaunch.registration WHERE lower(first_name) like %$1% OR lower(last_name) %$1%',
-    values: [name.toLowerCase()]
-  }
-  const searchResponse = await context.db.query(searchQuery)
+  const query = `%${name}%`
+  const searchResponse = await context.db.query(SQL(`
+    SELECT * FROM prelaunch.registration 
+    WHERE lower(first_name) like :query OR lower(last_name) like :query
+  `)({
+    query
+  }))
   callback(null, searchResponse.rows[0])
 })
 
