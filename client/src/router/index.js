@@ -10,7 +10,7 @@ import NotFound from '@/containers/NotFound'
 
 Vue.use(Router)
 
-cost router = new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
