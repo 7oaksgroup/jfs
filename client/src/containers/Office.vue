@@ -11,7 +11,9 @@
       <p class="bold">Do you know other beauty professionals that would love to be a part of the Just For Stylists Community? 
       Expand your circle of influence by sharing the invite link below:</p>
       <div class="share-link">
-        <input type="text" v-model="safeShareUrl" readonly/>
+        <small v-if="!copied">Click to copy:</small>
+        <small v-if="copied">Copied!</small>
+        <input v-model="safeShareUrl" readonly="readonly" @click="copy"/>
       </div>
     </div>
     <div class="box">
@@ -60,6 +62,11 @@ export default {
     Button,
     Header
   },
+  data() {
+    return {
+      copied: false
+    }
+  },
   mounted() {
     if (!this.$store.getters.isLoggedIn) {
       this.$router.push('/')
@@ -71,6 +78,31 @@ export default {
     logout() {
       this.$store.dispatch('logout')
       this.$router.push('/')
+    },
+    copy(event) {
+      let el = event.target
+      let oldContentEditable = el.contentEditable
+      let oldReadOnly = el.readOnly
+      let range = document.createRange()
+
+      el.contenteditable = true
+      el.readonly = false
+      range.selectNodeContents(el)
+
+      let s = window.getSelection()
+      s.removeAllRanges()
+      s.addRange(range)
+
+      el.setSelectionRange(0, 999999)
+
+      el.contentEditable = oldContentEditable
+      el.readOnly = oldReadOnly
+
+      document.execCommand('copy')
+      this.copied = true
+      setTimeout(() => {
+        this.copied = false
+      }, 3000)
     }
   },
   computed: {
@@ -191,7 +223,7 @@ p.bold {
 }
 .arc.top {
   transform: rotate(45deg) skewX(30deg);
-  animation: rotate-top 60s infinite linear;
+  animation: rotate-top 45s infinite linear;
 }
 .arc.top.shadow {
   transform: rotate(44deg) skewX(29deg);
@@ -199,7 +231,7 @@ p.bold {
 }
 .arc.top2 {
   transform: rotate(93deg) skewX(30deg);
-  animation: rotate-top2 60s infinite linear;
+  animation: rotate-top2 45s infinite linear;
 }
 .arc.top2.shadow {
   transform: rotate(92deg) skewX(29deg);
@@ -207,7 +239,7 @@ p.bold {
 }
 .arc.bottom {
   transform: rotate(-150deg) skewX(30deg);
-  animation: rotate-bottom 60s infinite linear;
+  animation: rotate-bottom 20s infinite linear;
 }
 .arc.bottom.shadow {
   transform: rotate(-150deg) skewX(31deg);
