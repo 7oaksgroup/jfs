@@ -72,8 +72,9 @@ module.exports.register = curry(async (event, context, callback) => {
     firstName,
     lastName,
     email,
+    facebook_id,
     facebook_avatar,
-    zip
+    zip,
   } = JSON.parse(event.body)
 
   const friendQuery = {
@@ -91,8 +92,8 @@ module.exports.register = curry(async (event, context, callback) => {
     text: `UPDATE
       prelaunch.registration
       SET first_name = $1, last_name = $2, email = $3, avatar_url = $4, postal_code = $5, sponsor_id = $6 
-      WHERE facebook_email = $3`,
-    values: [firstName, lastName, email, facebook_avatar, zip, friendId]
+      WHERE facebook_id = $7`,
+    values: [firstName, lastName, email, facebook_avatar, zip, friendId, facebook_id]
   }
   await context.db.query(registerQuery)
 
