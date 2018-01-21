@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import VueAnalytics from 'vue-analytics'
 import Home from '@/containers/Home'
 import Register from '@/containers/Register'
 import Facebook from '@/containers/Facebook'
@@ -9,7 +10,7 @@ import NotFound from '@/containers/NotFound'
 
 Vue.use(Router)
 
-export default new Router({
+cost router = new Router({
   mode: 'history',
   routes: [
     {
@@ -50,3 +51,10 @@ export default new Router({
     { path: '*', component: NotFound }
   ]
 })
+
+Vue.use(VueAnalytics, {
+  id: process.env.GA,
+  router
+})
+
+export default router

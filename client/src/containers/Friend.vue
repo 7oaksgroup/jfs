@@ -54,9 +54,11 @@ export default {
   methods: {
     async showFriends() {
       await this.$store.dispatch('showFacebookFriends')
+      this.$ga.event('Friend', 'Find', 'Facebook', true)
     },
     async searchFriend() {
       await this.$store.dispatch('search', this.searchName)
+      this.$ga.event('Friend', 'Find', 'Search', this.searchName)
     },
     async setFriend(id) {
       this.$store.dispatch('saveInviteCode', id)
@@ -64,6 +66,7 @@ export default {
     },
     async checkInviteCode() {
       this.errorCode = false
+      this.$ga.event('Friend', 'Find', 'InviteCode', this.inviteCode)
       await this.$store.dispatch('checkInviteCode', this.inviteCode)
       if (this.$store.state.currentUser.inviteCode) {
         this.$router.push('/register')
