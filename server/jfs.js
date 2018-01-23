@@ -74,7 +74,7 @@ module.exports.register = curry(async (event, context, callback) => {
     email,
     facebook_id,
     facebook_avatar,
-    zip,
+    zip
   } = JSON.parse(event.body)
 
   const friendQuery = {
@@ -93,7 +93,15 @@ module.exports.register = curry(async (event, context, callback) => {
       prelaunch.registration
       SET first_name = $1, last_name = $2, email = $3, avatar_url = $4, postal_code = $5, sponsor_id = $6 
       WHERE facebook_id = $7`,
-    values: [firstName, lastName, email, facebook_avatar, zip, friendId, facebook_id]
+    values: [
+      firstName,
+      lastName,
+      email,
+      facebook_avatar,
+      zip,
+      friendId,
+      facebook_id
+    ]
   }
   await context.db.query(registerQuery)
 
@@ -157,7 +165,7 @@ module.exports.influence = curry(async (event, context, callback) => {
   }
   const response = await context.db.query(influenceQuery)
   const countResponse = await context.db.query(
-    `SELECT COUNT(id) FROM prelaunch.registration`
+    `SELECT COUNT(id) FROM prelaunch.registration WHERE postal_code IS NOT NULL`
   )
   callback(null, {
     influence: response.rows,
