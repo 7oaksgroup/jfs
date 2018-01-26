@@ -24,7 +24,7 @@ export default {
       awards: [1, 5],
       plural: {
         1: 'Stylist',
-        5: 'Stylist'
+        5: 'Stylists'
       }
     }
   },
