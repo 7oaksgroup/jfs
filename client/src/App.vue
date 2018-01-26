@@ -45,4 +45,10 @@ html {
   box-shadow: 2px 2px 6px -3px #000;
   cursor: pointer;
 }
+ul,
+li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
 </style>

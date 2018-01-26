@@ -21,6 +21,9 @@
       <p class="bold">Join our Exclusive Facebook Group!</p>
       <Button href="https://www.facebook.com/groups/142418766393701/">Just For Stylists on Facebook</Button>
     </div>
+    <div class="box grey">
+      <Backbar :stylists="getStylists" ></Backbar>
+    </div>
     <div class="banner">
       <div>
         <p class="italics">Number of owners, dreamers, doers:</p>
@@ -55,12 +58,14 @@
 import { mapState } from 'vuex'
 import Header from '@/components/Header'
 import Button from '@/components/Button'
+import Backbar from '@/components/Backbar'
 
 export default {
   name: 'Office',
   components: {
     Button,
-    Header
+    Header,
+    Backbar
   },
   data() {
     return {
@@ -120,7 +125,10 @@ export default {
       avatar: state =>
         `https://graph.facebook.com/${
           state.currentUser.facebook_id
-        }/picture?type=large`
+        }/picture?type=large`,
+      getStylists: state =>
+        state.influence.filter(i => ~~i.sponsor_id === state.currentUser.id)
+          .length
     })
   }
 }
@@ -156,6 +164,12 @@ p.bold {
   max-width: 550px;
   margin: 0 auto 75px auto;
 }
+.box.grey {
+  background-color: #efefef;
+  padding: 25px;
+  box-shadow: 0px 1px 1px 1px #ababab;
+}
+
 .welcome-message {
   position: relative;
   max-width: 550px;

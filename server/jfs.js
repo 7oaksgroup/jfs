@@ -1,4 +1,5 @@
-'use strict'
+import { decode } from 'punycode'
+;('use strict')
 
 const { prettyErrorHandler } = require('./middleware')
 const SQL = require('yesql').pg
@@ -82,7 +83,6 @@ module.exports.register = curry(async (event, context, callback) => {
     values: [inviteCode]
   }
   const friendResponse = await context.db.query(friendQuery)
-  console.log(friendQuery, friendResponse)
   if (!friendResponse.rows[0]) {
     callback(createErr(400, 'Invite Code was not valid.'))
   }
@@ -110,7 +110,6 @@ module.exports.register = curry(async (event, context, callback) => {
     values: [email]
   }
   const getResponse = await context.db.query(getQuery)
-
   callback(null, getResponse.rows[0])
 })
 
