@@ -4,6 +4,17 @@
       <a @click="logout">Logout</a>
     </Header>
     <h1>Welcome, {{firstName}}!</h1>
+    <div class="box">
+      <p class="italics">Welcome to the Just For Stylists Community!</p>
+      <p class="bold">Just For Stylists was formed to: </p>
+      <ul class="intro-list">
+        <li>Support a worldwide community exclusively for beauty professionals</li>
+        <li>Provide world-class training from leading experts on beauty, social media and personal and professional development</li>
+        <li>Develop salon-exclusive, high-quality and safe hair care and beauty products</li>
+        <li>Have a lot of fun (including sponsored events, trips, and once-in-a-lifetime experiences)! </li>
+      </ul>
+      <p class="bold">So, welcome to the JFS Family! Let's celebrate and make this world more beautiful together!</p>
+    </div>
     <div class="welcome-message">
       <div class="main-avatar">
         <img width="100" height="100" :src="avatar"/>
@@ -141,6 +152,15 @@ export default {
     Georgia, serif;
   font-style: italic;
   font-size: 24px;
+}
+.italics.small {
+  font-size: 18px;
+}
+
+.intro-list {
+}
+.intro-list li {
+  margin: 15px 0;
 }
 
 input {
