@@ -15,7 +15,7 @@
         </ul>
       </div>
       <hr/>
-      <div class="leaderboard">
+      <div v-if="leaderboard.length > 0" class="leaderboard">
         <table>
           <thead>
             <tr>
@@ -92,6 +92,7 @@ export default {
   height: 8px;
   border-radius: 100%;
   vertical-align: middle;
+  margin: 0 1px;
 }
 .dot.full {
   border: 5px solid #e6d878;
