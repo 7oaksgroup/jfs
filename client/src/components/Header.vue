@@ -2,7 +2,8 @@
   <div class="header" :class="{ reverse: reverse }">
     <div class="container">
       <div class="logo">
-        <img src="../assets/logo.png" />
+        <img v-if="!reverse" src="../assets/logo.png" />
+        <img v-if="reverse" src="../assets/logo-invert.png" />
       </div>
       <div class="menu">
         <slot></slot>
