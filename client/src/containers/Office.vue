@@ -285,7 +285,7 @@ p.bold {
   z-index: 0;
 }
 .count {
-  padding: 65px;
+  padding: 65px 50px;
   font-size: 65px;
   font-weight: 700;
 }

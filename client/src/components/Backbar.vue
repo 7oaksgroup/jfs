@@ -119,7 +119,10 @@ export default {
 .leaderboard .rank {
   display: inline-block;
   border-radius: 100%;
-  margin-right: 25px;
+  margin-right: 8px;
+  vertical-align: middle;
+  border: 2px solid #e6d878;
+  width: 35px;
 }
 hr {
   border-color: #e6d878;
