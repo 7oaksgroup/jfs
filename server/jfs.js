@@ -171,3 +171,19 @@ module.exports.influence = curry(async (event, context, callback) => {
     count: countResponse.rows[0].count
   })
 })
+
+module.exports.leaderboard = curry(async (event, context, callback) => {
+  const leaderboardQuery = {
+    text: `SELECT r2.first_name ||' '||  r2.last_name as name, r2.avatar_url FROM
+              prelaunch.registration r1 INNER JOIN
+              prelaunch.registration r2 ON r1.sponsor_id = r2.id
+          WHERE r2.id != 2
+          GROUP BY r1.sponsor_id, r2.first_name, r2.last_name, r2.avatar_url 
+          Having COUNT(r1.*) >= 5
+          ORDER BY COUNT(r1.*) DESC`
+  }
+  const response = await context.db.query(leaderboardQuery)
+  callback(null, {
+    leaderboard: response.rows
+  })
+})

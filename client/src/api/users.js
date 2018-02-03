@@ -26,6 +26,9 @@ export default {
   getInfluence: () => {
     return api.get('/prelaunch/influence')
   },
+  getLeaderboard: () => {
+    return api.get('/prelaunch/leaderboard')
+  },
   updateJwt: () => {
     const jwt = localStorage.getItem('jwt')
     api.defaults.headers.common['Authorization'] = `Bearer ${jwt}`

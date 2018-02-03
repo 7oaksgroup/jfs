@@ -2,7 +2,7 @@
   <div class="header" :class="{ reverse: reverse }">
     <div class="container">
       <div class="logo">
-        JustForStylists
+        <img src="../assets/logo.png" />
       </div>
       <div class="menu">
         <slot></slot>
@@ -41,6 +41,10 @@ export default {
   padding: 22px 45px;
   font-weight: 700;
   font-size: 18px;
+  width: 150px;
+}
+.logo img{
+  width: 100%;
 }
 .menu {
   position: absolute;

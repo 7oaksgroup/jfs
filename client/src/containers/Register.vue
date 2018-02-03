@@ -115,7 +115,7 @@ input {
 input[type='submit'] {
   text-decoration: none;
   color: #fff;
-  background-color: #ff69b4;
+  background-color: #e6d878;
   padding: 0 30px;
   border-radius: 12px;
   box-shadow: 2px 2px 6px -3px #000;

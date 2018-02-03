@@ -94,7 +94,7 @@ p {
 }
 hr {
   width: 100px;
-  border-color: #ff69b4;
+  border-color: #e6d878;
   border-style: solid;
 }
 input {

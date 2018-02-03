@@ -33,7 +33,7 @@
       <Button href="https://www.facebook.com/groups/142418766393701/">Just For Stylists on Facebook</Button>
     </div>
     <div class="box grey">
-      <Backbar :stylists="getStylists" ></Backbar>
+      <Backbar :stylists="getStylists" :leaderboard="leaderboard"></Backbar>
     </div>
     <div class="banner">
       <div>
@@ -89,6 +89,7 @@ export default {
       return
     }
     this.$store.dispatch('getInfluence')
+    this.$store.dispatch('getLeaderboard')
   },
   methods: {
     logout() {
@@ -139,7 +140,8 @@ export default {
         }/picture?type=large`,
       getStylists: state =>
         state.influence.filter(i => ~~i.sponsor_id === state.currentUser.id)
-          .length
+          .length,
+      leaderboard: state => state.leaderboard
     })
   }
 }
@@ -164,7 +166,7 @@ export default {
 }
 
 input {
-  border: 1px solid #ff69b4;
+  border: 1px solid #e6d878;
   text-align: center;
   padding: 10px 5px;
   width: 100%;
@@ -185,18 +187,20 @@ p.bold {
   margin: 0 auto 75px auto;
 }
 .box.grey {
-  background-color: #efefef;
+  background-color: #515151;
   padding: 25px;
   box-shadow: 0px 1px 1px 1px #ababab;
+  color: #fff;
 }
 
 .welcome-message {
   position: relative;
   max-width: 550px;
-  background-color: #efefef;
+  background-color: #515151;
   margin: 75px auto 0 auto;
   padding: 45px 25px;
   box-shadow: 0px 1px 1px 1px #ababab;
+  color: #fff;
 }
 .main-avatar {
   position: absolute;
@@ -207,19 +211,20 @@ p.bold {
   height: 114px;
   background: transparent;
   transform: translateX(-50%);
-  border: 7px solid #efefef;
+  border: 7px solid #515151;
 }
 .main-avatar img {
   border-radius: 100%;
   border: 7px solid #fff;
 }
 .banner {
-  background-color: #efefef;
+  background-color: #515151;
   padding: 0 45px;
   display: flex;
   align-items: center;
   box-shadow: 0px 1px 1px 1px #ababab;
   flex-wrap: wrap;
+  color: #fff;
 }
 .banner > div {
   flex: 1;
@@ -245,7 +250,7 @@ p.bold {
 .arc:before {
   box-sizing: border-box;
   display: block;
-  border: solid 20px #ff69b4;
+  border: solid 20px #e6d878;
   width: 200%;
   height: 200%;
   border-radius: 50%;
@@ -253,7 +258,7 @@ p.bold {
   content: '';
 }
 .arc.shadow:before {
-  border: solid 20px #000;
+  border: solid 1px #000;
 }
 .arc.top {
   transform: rotate(45deg) skewX(30deg);
@@ -280,7 +285,7 @@ p.bold {
   z-index: 0;
 }
 .count {
-  padding: 50px;
+  padding: 65px;
   font-size: 65px;
   font-weight: 700;
 }
@@ -293,7 +298,7 @@ p.bold {
 }
 .avatar {
   border-radius: 100%;
-  border: 4px solid #ff69b4;
+  border: 4px solid #e6d878;
 }
 
 @keyframes rotate-bottom {

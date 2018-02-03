@@ -10,7 +10,8 @@ const state = {
   currentUser: {},
   friends: [],
   count: 0,
-  influence: []
+  influence: [],
+  leaderboard: []
 }
 
 const mutations = {
@@ -27,6 +28,10 @@ const mutations = {
   addInfluence(state, data) {
     state.influence = data.influence
     state.count = data.count
+  },
+  addLeaderboard(state, data) {
+    console.log(data)
+    state.leaderboard = data.leaderboard
   },
   logout(state) {
     state.currentUser = {}
@@ -98,6 +103,10 @@ const actions = {
     await UsersApi.updateJwt()
     const response = await UsersApi.getInfluence()
     commit('addInfluence', response.data)
+  },
+  async getLeaderboard({ commit }) {
+    const response = await UsersApi.getLeaderboard()
+    commit('addLeaderboard', response.data)
   }
 }
 
