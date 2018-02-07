@@ -5,9 +5,7 @@ export default {
     this.$store.dispatch('loadUser')
     const inviteCode =
       this.$route.query.inviteCode || localStorage.getItem('inviteCode')
-    if (inviteCode) {
-      this.$store.dispatch('saveInviteCode', inviteCode)
-    }
+    this.$store.dispatch('saveInviteCode', inviteCode)
   },
   render() {
     return (

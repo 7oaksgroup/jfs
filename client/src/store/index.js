@@ -70,7 +70,11 @@ const actions = {
     }
   },
   saveInviteCode({ commit }, inviteCode) {
-    localStorage.setItem('inviteCode', inviteCode)
+    if (inviteCode) {
+      localStorage.setItem('inviteCode', inviteCode)
+    } else {
+      localStorage.setItem('inviteCode', process.env.DEFAULT_CODE)
+    }
     commit('updateUser', { inviteCode })
   },
   clearStorage() {
