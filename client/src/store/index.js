@@ -30,7 +30,6 @@ const mutations = {
     state.count = data.count
   },
   addLeaderboard(state, data) {
-    console.log(data)
     state.leaderboard = data.leaderboard
   },
   logout(state) {
