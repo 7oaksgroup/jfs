@@ -4,6 +4,10 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
+// Middleware
+if (process.env.BUGSNAG) {
+  import './middleware/bugsnag'
+}
 
 Vue.config.productionTip = false
 
@@ -12,7 +16,7 @@ new Vue({
   el: '#app',
   router,
   store,
-  render (h) {
+  render(h) {
     return h(App)
   }
 })
