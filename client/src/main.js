@@ -5,9 +5,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 // Middleware
-if (process.env.BUGSNAG) {
-  import './middleware/bugsnag'
-}
+import './middleware/bugsnag'
 
 Vue.config.productionTip = false
 
