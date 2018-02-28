@@ -79,13 +79,15 @@ module.exports.register = curry(async (event, context, callback) => {
     zip
   } = JSON.parse(event.body)
 
+  console.log(tenantId, inviteCode)
+
   const friendQuery = {
-    text: 'SELECT * FROM prelaunch.registration where email = $1 OR id::varchar = $1 AND tenant_id = $2',
+    text: 'SELECT * FROM prelaunch.registration where (email = $1 OR id::varchar = $1) AND tenant_id = $2',
     values: [inviteCode, tenantId]
   }
   const friendResponse = await context.db.query(friendQuery)
   if (!friendResponse.rows[0]) {
-    callback(createErr(400, 'Invite Code was not valid.'))
+    return callback(createErr(400, 'Invite Code was not valid.'))
   }
   const friendId = friendResponse.rows[0].id
 

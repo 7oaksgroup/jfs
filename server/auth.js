@@ -106,6 +106,7 @@ module.exports.facebook = (event, context, callback) => {
                         facebook_name: user.name,
                         facebook_email: user.email,
                         facebook_avatar: user.avatar,
+                        tenant_id: tenantId,
                         email: user.email
                       })
                       .returning('*')
