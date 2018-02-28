@@ -1,9 +1,9 @@
 'use strict'
-const merge = require('webpack-merge')
-const prodEnv = require('./prod.env')
 
-module.exports = merge(prodEnv, {
+module.exports = {
   NODE_ENV: '"development"',
   API_URL: '"http://localhost:3000"',
-  DEFAULT_CODE: 1
-})
+  GA: '"UA-112834045-1"',
+  DEFAULT_CODE: 1,
+  TENANT_ID: 1001
+}

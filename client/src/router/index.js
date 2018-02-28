@@ -47,7 +47,8 @@ const router = new Router({
     {
       path: '/login/facebook',
       redirect: () => {
-        window.location.href = `${process.env.API_URL}/prelaunch/tenant/${TENANT_ID}/auth/facebook`
+        const redirect = encodeURIComponent(`${window.location.origin}/auth/facebook`)
+        window.location.href = `${process.env.API_URL}/prelaunch/tenant/${TENANT_ID}/auth/facebook?redirectUrl=${redirect}`
       }
     },
     { path: '*', component: NotFound }

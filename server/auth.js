@@ -5,16 +5,16 @@ var https = require('https')
 var jwt = require('jsonwebtoken')
 
 var oauths = {
-  1: new OAuth2(
-    process.env.appKey1,
-    process.env.appSecret1,
+  1001: new OAuth2(
+    process.env.appKey1001,
+    process.env.appSecret1001,
     'https://graph.facebook.com/',
     null,
     'v2.8/oauth/access_token'
   ),
-  2: new OAuth2(
-    process.env.appKey2,
-    process.env.appSecret2,
+  1002: new OAuth2(
+    process.env.appKey1002,
+    process.env.appSecret1002,
     'https://graph.facebook.com/',
     null,
     'v2.8/oauth/access_token'
@@ -32,14 +32,15 @@ module.exports.facebook = (event, context, callback) => {
   * error=access_denied&error_code=200&error_description=Permissions+error&error_reason=user_denied
   */
   const tenantId = event.pathParameters.tenantId
-  if (event.queryStringParameters && event.queryStringParameters.error) {
-    console.log(event.queryStringParameters)
-    callback(null, getFailureResponse(event.queryStringParameters))
-  } else if (
-    !event.queryStringParameters.code && event.queryStringParameters.redirectUrl
-  ) {
+  const qs = event.queryStringParameters || {}
+  if (qs.error) {
+    console.log(qs)
+    callback(null, getFailureResponse(qs))
+  } else if ( !qs.code){
+    if( !qs.redirectUrl ){
+      throw new Error('Cannot authenticate with Facebook without a redirect URL')
+    }
     // redirect to facebook if "code" is not provided in the query string
-    const redirectUrl = event.pathParameters.redirectUrl
     callback(null, {
       statusCode: 302,
       headers: {
@@ -47,15 +48,15 @@ module.exports.facebook = (event, context, callback) => {
           '?client_id=' +
           process.env[`appKey${tenantId}`] +
           '&redirect_uri=' +
-          redirectUrl +
+          qs.redirectUrl +
           '&scope=email,user_friends'
       }
     })
-  } else if (event.queryStringParameters.code) {
+  } else if (qs.code) {
     // process request from facebook that has "code"
     var oauth2 = oauths[tenantId]
     oauth2.getOAuthAccessToken(
-      event.queryStringParameters.code,
+      qs.code,
       options,
       function(error, access_token, refresh_token, results) {
         if (error) {
