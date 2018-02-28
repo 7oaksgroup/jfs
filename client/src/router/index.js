@@ -8,6 +8,8 @@ import Office from '@/containers/Office'
 import Friend from '@/containers/Friend'
 import NotFound from '@/containers/NotFound'
 
+import { TENANT_ID } from '../config/TenantConfig'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -45,7 +47,7 @@ const router = new Router({
     {
       path: '/login/facebook',
       redirect: () => {
-        window.location.href = `${process.env.API_URL}/prelaunch/auth/facebook`
+        window.location.href = `${process.env.API_URL}/prelaunch/tenant/${TENANT_ID}/auth/facebook`
       }
     },
     { path: '*', component: NotFound }

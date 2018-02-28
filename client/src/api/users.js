@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const tenantId = 1001
+import { TENANT_ID } from '../config/TenantConfig'
+
+const tenantId = TENANT_ID
 const api = axios.create({
   baseURL: process.env.API_URL
 })
