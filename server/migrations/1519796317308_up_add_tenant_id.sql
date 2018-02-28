@@ -1,0 +1,1 @@
+alter table prelaunch.registration ADD COLUMN tenant_id BIGINT NULL;
