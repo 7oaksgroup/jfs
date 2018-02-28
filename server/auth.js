@@ -4,13 +4,22 @@ var OAuth2 = require('oauth').OAuth2
 var https = require('https')
 var jwt = require('jsonwebtoken')
 
-var oauth2 = new OAuth2(
-  process.env.appKey,
-  process.env.appSecret,
-  'https://graph.facebook.com/',
-  null,
-  'v2.8/oauth/access_token'
-)
+var oauths = {
+  1: new OAuth2(
+    process.env.appKey1,
+    process.env.appSecret1,
+    'https://graph.facebook.com/',
+    null,
+    'v2.8/oauth/access_token'
+  ),
+  2: new OAuth2(
+    process.env.appKey2,
+    process.env.appSecret2,
+    'https://graph.facebook.com/',
+    null,
+    'v2.8/oauth/access_token'
+  )
+}
 
 var options = {
   redirect_uri: process.env.redirectUrl
@@ -22,26 +31,29 @@ module.exports.facebook = (event, context, callback) => {
   * declines to grant access.
   * error=access_denied&error_code=200&error_description=Permissions+error&error_reason=user_denied
   */
+  const tenantId = event.pathParameters.tenantId
   if (event.queryStringParameters && event.queryStringParameters.error) {
     console.log(event.queryStringParameters)
     callback(null, getFailureResponse(event.queryStringParameters))
   } else if (
-    !event.queryStringParameters || !event.queryStringParameters.code
+    !event.queryStringParameters.code && event.queryStringParameters.redirectUrl
   ) {
     // redirect to facebook if "code" is not provided in the query string
+    const redirectUrl = event.pathParameters.redirectUrl
     callback(null, {
       statusCode: 302,
       headers: {
         Location: 'https://www.facebook.com/v2.11/dialog/oauth' +
           '?client_id=' +
-          process.env.appKey +
+          process.env[`appKey${tenantId}`] +
           '&redirect_uri=' +
-          process.env.redirectUrl +
+          redirectUrl +
           '&scope=email,user_friends'
       }
     })
-  } else {
+  } else if (event.queryStringParameters.code) {
     // process request from facebook that has "code"
+    var oauth2 = oauths[tenantId]
     oauth2.getOAuthAccessToken(
       event.queryStringParameters.code,
       options,

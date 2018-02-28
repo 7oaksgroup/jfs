@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+const tenantId = 1001
 const api = axios.create({
   baseURL: process.env.API_URL
 })
@@ -9,25 +10,25 @@ api.defaults.headers.common['Authorization'] = `Bearer ${jwt}`
 
 export default {
   register: user => {
-    return api.post('/prelaunch/register', user)
+    return api.post(`/prelaunch/tenant/${tenantId}/register`, user)
   },
   facebookConnect: search => {
-    return api.get(`/prelaunch/auth/facebook?${search}`)
+    return api.get(`/prelaunch/tenant/${tenantId}/auth/facebook?${search}`)
   },
   search: search => {
-    return api.get(`/prelaunch/search?name=${search}`)
+    return api.get(`/prelaunch/tenant/${tenantId}/search?name=${search}`)
   },
   get: id => {
-    return api.get(`/prelaunch/user/${id}`)
+    return api.get(`/prelaunch/tenant/${tenantId}/user/${id}`)
   },
   getFacebookFriends: ids => {
-    return api.get(`/prelaunch/friends?ids=${ids.join(',')}`)
+    return api.get(`/prelaunch/tenant/${tenantId}/friends?ids=${ids.join(',')}`)
   },
   getInfluence: () => {
-    return api.get('/prelaunch/influence')
+    return api.get(`/prelaunch/tenant/${tenantId}/influence`)
   },
   getLeaderboard: () => {
-    return api.get('/prelaunch/leaderboard')
+    return api.get(`/prelaunch/tenant/${tenantId}/leaderboard`)
   },
   updateJwt: () => {
     const jwt = localStorage.getItem('jwt')

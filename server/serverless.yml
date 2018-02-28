@@ -28,59 +28,84 @@ functions:
     handler: auth.facebook
     events: 
       - http:
-          path: prelaunch/auth/facebook
+          path: prelaunch/tenant/{tenantId}/auth/facebook
           method: get
           cors: true
+          request:
+            parameters:
+              paths:
+                tenantId: true
     environment: ${file(env.yaml):${self:custom.stage}}
   register:
     handler: jfs.register
     events: 
       - http:
-          path: prelaunch/register
+          path: prelaunch/tenant/{tenantId}/register
           method: post
           cors: true
+          request:
+            parameters:
+              paths:
+                tenantId: true
     environment: ${file(env.yaml):${self:custom.stage}}
   search:
     handler: jfs.search
     events: 
       - http:
-          path: prelaunch/search
+          path: prelaunch/tenant/{tenantId}/search
           method: get
           cors: true
+          request:
+            parameters:
+              paths:
+                tenantId: true
     environment: ${file(env.yaml):${self:custom.stage}}
   getUser:
     handler: jfs.getUser
     events: 
       - http:
-          path: prelaunch/user/{id}
+          path: prelaunch/tenant/{tenantId}/user/{id}
           method: get
           cors: true
           request:
             parameters:
               paths:
                 id: true
+                tenantId: true
     environment: ${file(env.yaml):${self:custom.stage}}
   facebookFriends:
     handler: jfs.facebookFriends
     events: 
       - http:
-          path: prelaunch/friends
+          path: prelaunch/tenant/{tenantId}/friends
           method: get
           cors: true
+          request:
+            parameters:
+              paths:
+                tenantId: true
     environment: ${file(env.yaml):${self:custom.stage}}
   influence:
     handler: jfs.influence
     events: 
       - http:
-          path: prelaunch/influence
+          path: prelaunch/tenant/{tenantId}/influence
           method: get
           cors: true
+          request:
+            parameters:
+              paths:
+                tenantId: true
     environment: ${file(env.yaml):${self:custom.stage}}
   leaderboard:
     handler: jfs.leaderboard
     events: 
       - http:
-          path: prelaunch/leaderboard
+          path: prelaunch/tenant/{tenantId}/leaderboard
           method: get
           cors: true
+          request:
+            parameters:
+              paths:
+                tenantId: true
     environment: ${file(env.yaml):${self:custom.stage}}
