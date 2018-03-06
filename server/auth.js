@@ -21,9 +21,7 @@ var oauths = {
   )
 }
 
-var options = {
-  redirect_uri: process.env.redirectUrl
-}
+const redirects = {}
 
 module.exports.facebook = (event, context, callback) => {
   /*
@@ -36,11 +34,14 @@ module.exports.facebook = (event, context, callback) => {
   if (qs.error) {
     console.log(qs)
     callback(null, getFailureResponse(qs))
-  } else if ( !qs.code){
-    if( !qs.redirectUrl ){
-      throw new Error('Cannot authenticate with Facebook without a redirect URL')
+  } else if (!qs.code) {
+    if (!qs.redirectUrl) {
+      throw new Error(
+        'Cannot authenticate with Facebook without a redirect URL'
+      )
     }
     // redirect to facebook if "code" is not provided in the query string
+    redirects[tenantId] = qs.redirectUrl
     callback(null, {
       statusCode: 302,
       headers: {
@@ -55,79 +56,83 @@ module.exports.facebook = (event, context, callback) => {
   } else if (qs.code) {
     // process request from facebook that has "code"
     var oauth2 = oauths[tenantId]
-    oauth2.getOAuthAccessToken(
-      qs.code,
-      options,
-      function(error, access_token, refresh_token, results) {
-        if (error) {
+    var options = {
+      redirect_uri: redirects[tenantId]
+    }
+    oauth2.getOAuthAccessToken(qs.code, options, function(
+      error,
+      access_token,
+      refresh_token,
+      results
+    ) {
+      if (error) {
+        console.log(error)
+        callback(null, getFailureResponse(error))
+      }
+
+      var url =
+        'https://graph.facebook.com/me?fields=id,name,email,picture,friends&access_token=' +
+        access_token
+
+      https
+        .get(url, function(res) {
+          console.log('got response: ' + res.statusCode)
+
+          var body = ''
+
+          res.on('data', function(chunk) {
+            body += chunk
+          })
+
+          res.on('end', function() {
+            var json = JSON.parse(body)
+            console.log('FACEBOOK RESPONSE', json)
+            var user = {
+              facebookId: json.id,
+              name: json.name,
+              email: json.email,
+              avatar: json.picture.data.url
+            }
+
+            var pg = require('knex')({
+              client: 'pg',
+              connection: process.env.dbUrl
+            })
+
+            pg('prelaunch.registration')
+              .select('*')
+              .where({ facebook_id: user.facebookId })
+              .then(function(rows) {
+                if (rows.length > 0) {
+                  return rows
+                } else {
+                  return pg('prelaunch.registration')
+                    .insert({
+                      facebook_id: user.facebookId,
+                      facebook_name: user.name,
+                      facebook_email: user.email,
+                      facebook_avatar: user.avatar,
+                      tenant_id: tenantId,
+                      email: user.email
+                    })
+                    .returning('*')
+                }
+              })
+              .then(function(rows) {
+                callback(
+                  null,
+                  getSuccessResponse(Object.assign({}, rows[0]), json)
+                )
+                pg.destroy()
+              })
+          })
+        })
+        .on('error', function(error) {
           console.log(error)
           callback(null, getFailureResponse(error))
-        }
-
-        var url =
-          'https://graph.facebook.com/me?fields=id,name,email,picture,friends&access_token=' +
-          access_token
-
-        https
-          .get(url, function(res) {
-            console.log('got response: ' + res.statusCode)
-
-            var body = ''
-
-            res.on('data', function(chunk) {
-              body += chunk
-            })
-
-            res.on('end', function() {
-              var json = JSON.parse(body)
-              console.log('FACEBOOK RESPONSE', json)
-              var user = {
-                facebookId: json.id,
-                name: json.name,
-                email: json.email,
-                avatar: json.picture.data.url
-              }
-
-              var pg = require('knex')({
-                client: 'pg',
-                connection: process.env.dbUrl
-              })
-
-              pg('prelaunch.registration')
-                .select('*')
-                .where({ facebook_id: user.facebookId })
-                .then(function(rows) {
-                  if (rows.length > 0) {
-                    return rows
-                  } else {
-                    return pg('prelaunch.registration')
-                      .insert({
-                        facebook_id: user.facebookId,
-                        facebook_name: user.name,
-                        facebook_email: user.email,
-                        facebook_avatar: user.avatar,
-                        tenant_id: tenantId,
-                        email: user.email
-                      })
-                      .returning('*')
-                  }
-                })
-                .then(function(rows) {
-                  callback(
-                    null,
-                    getSuccessResponse(Object.assign({}, rows[0]), json)
-                  )
-                  pg.destroy()
-                })
-            })
-          })
-          .on('error', function(error) {
-            console.log(error)
-            callback(null, getFailureResponse(error))
-            pg.destroy()
-          })
-      }
-    )
+          pg.destroy()
+        })
+    })
   }
 }
 

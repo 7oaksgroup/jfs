@@ -164,6 +164,7 @@ module.exports.influence = curry(async (event, context, callback) => {
   const { Authorization } = event.headers
   const token = Authorization.split(' ')[1]
   const decoded = jwt.verify(token, process.env.jwtKey)
+  console.log(`Getting influence for user: ${decoded.id}, in tenant ${tenantId}`)
   const influenceQuery = {
     text: `select d.*
       from prelaunch.genealogy d
@@ -178,7 +179,7 @@ module.exports.influence = curry(async (event, context, callback) => {
     text: `SELECT COUNT(id) FROM prelaunch.registration WHERE postal_code IS NOT NULL AND tenant_id = $1`,
     values: [tenantId]
   }
-  const countResponse = await context.db.query()
+  const countResponse = await context.db.query(countQuery)
   callback(null, {
     influence: response.rows,
     count: countResponse.rows[0].count
