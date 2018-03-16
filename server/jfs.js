@@ -68,6 +68,7 @@ module.exports.root = curry((event, context, callback) => {
 })
 
 module.exports.register = curry(async (event, context, callback) => {
+  const tenantId = event.pathParameters.tenantId
   const {
     inviteCode,
     firstName,
@@ -78,20 +79,22 @@ module.exports.register = curry(async (event, context, callback) => {
     zip
   } = JSON.parse(event.body)
 
+  console.log(tenantId, inviteCode)
+
   const friendQuery = {
-    text: 'SELECT * FROM prelaunch.registration where email = $1 OR id::varchar = $1',
-    values: [inviteCode]
+    text: 'SELECT * FROM prelaunch.registration where (email = $1 OR id::varchar = $1) AND tenant_id = $2',
+    values: [inviteCode, tenantId]
   }
   const friendResponse = await context.db.query(friendQuery)
   if (!friendResponse.rows[0]) {
-    callback(createErr(400, 'Invite Code was not valid.'))
+    return callback(createErr(400, 'Invite Code was not valid.'))
   }
   const friendId = friendResponse.rows[0].id
 
   const registerQuery = {
     text: `UPDATE
       prelaunch.registration
-      SET first_name = $1, last_name = $2, email = $3, avatar_url = $4, postal_code = $5, sponsor_id = $6 
+      SET first_name = $1, last_name = $2, email = $3, avatar_url = $4, postal_code = $5, sponsor_id = $6, tenant_id = $8
       WHERE facebook_id = $7`,
     values: [
       firstName,
@@ -100,20 +103,22 @@ module.exports.register = curry(async (event, context, callback) => {
       facebook_avatar,
       zip,
       friendId,
-      facebook_id
+      facebook_id,
+      tenantId
     ]
   }
   await context.db.query(registerQuery)
 
   const getQuery = {
-    text: 'SELECT * FROM prelaunch.registration where email = $1',
-    values: [email]
+    text: 'SELECT * FROM prelaunch.registration where email = $1 AND tenant_id = $2',
+    values: [email, tenantId]
   }
   const getResponse = await context.db.query(getQuery)
   callback(null, getResponse.rows[0])
 })
 
 module.exports.search = curry(async (event, context, callback) => {
+  const tenantId = event.pathParameters.tenantId
   const name = event.queryStringParameters.name
   const query = `%${name.toLowerCase()}%`
   const searchResponse = await context.db.query(
@@ -121,51 +126,60 @@ module.exports.search = curry(async (event, context, callback) => {
       `
     SELECT * FROM prelaunch.registration 
     WHERE lower(first_name) like :query OR lower(last_name) like :query
+    AND tenant_id = :tenantId
   `
     )({
-      query
+      query,
+      tenantId
     })
   )
   callback(null, searchResponse.rows)
 })
 
 module.exports.getUser = curry(async (event, context, callback) => {
+  const tenantId = event.pathParameters.tenantId
   const id = event.pathParameters.id
   const userQuery = {
-    text: 'SELECT * FROM prelaunch.registration where id = $1',
-    values: [id]
+    text: 'SELECT * FROM prelaunch.registration where id = $1 AND tenant_id = $2',
+    values: [id, tenantId]
   }
   const userResponse = await context.db.query(userQuery)
   callback(null, userResponse.rows[0])
 })
 
 module.exports.facebookFriends = curry(async (event, context, callback) => {
+  const tenantId = event.pathParameters.tenantId
   const ids = event.queryStringParameters.ids
   const facebookIds = ids.split(',')
   const friendQuery = {
-    text: 'SELECT * FROM prelaunch.registration WHERE facebook_id = any($1)',
-    values: [facebookIds]
+    text: 'SELECT * FROM prelaunch.registration WHERE facebook_id = any($1) AND tenant_id = $2',
+    values: [facebookIds, tenantId]
   }
   const friendResponse = await context.db.query(friendQuery)
   callback(null, friendResponse.rows)
 })
 
 module.exports.influence = curry(async (event, context, callback) => {
+  const tenantId = event.pathParameters.tenantId
   const { Authorization } = event.headers
   const token = Authorization.split(' ')[1]
   const decoded = jwt.verify(token, process.env.jwtKey)
+  console.log(`Getting influence for user: ${decoded.id}, in tenant ${tenantId}`)
   const influenceQuery = {
     text: `select d.*
       from prelaunch.genealogy d
       inner join prelaunch.genealogy target on target.id = $1
       where d.path[target.depth] = target.id
-        and d.id != target.id`,
-    values: [decoded.id]
+        and d.id != target.id
+        and target.tenant_id = $2`,
+    values: [decoded.id, tenantId]
   }
   const response = await context.db.query(influenceQuery)
-  const countResponse = await context.db.query(
-    `SELECT COUNT(id) FROM prelaunch.registration WHERE postal_code IS NOT NULL`
-  )
+  const countQuery = {
+    text: `SELECT COUNT(id) FROM prelaunch.registration WHERE postal_code IS NOT NULL AND tenant_id = $1`,
+    values: [tenantId]
+  }
+  const countResponse = await context.db.query(countQuery)
   callback(null, {
     influence: response.rows,
     count: countResponse.rows[0].count
@@ -173,14 +187,17 @@ module.exports.influence = curry(async (event, context, callback) => {
 })
 
 module.exports.leaderboard = curry(async (event, context, callback) => {
+  const tenantId = event.pathParameters.tenantId
   const leaderboardQuery = {
     text: `SELECT r2.first_name ||' '||  r2.last_name as name, r2.avatar_url FROM
               prelaunch.registration r1 INNER JOIN
               prelaunch.registration r2 ON r1.sponsor_id = r2.id
           WHERE r2.id != 2
+          AND r2.tenant_id = $1
           GROUP BY r1.sponsor_id, r2.first_name, r2.last_name, r2.avatar_url 
           Having COUNT(r1.*) >= 5
-          ORDER BY COUNT(r1.*) DESC`
+          ORDER BY COUNT(r1.*) DESC`,
+    values: [tenantId]
   }
   const response = await context.db.query(leaderboardQuery)
   callback(null, {
