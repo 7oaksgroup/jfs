@@ -204,3 +204,20 @@ module.exports.leaderboard = curry(async (event, context, callback) => {
     leaderboard: response.rows
   })
 })
+
+module.exports.reports = curry(async (event, context, callback) => {
+  const tenantId = event.pathParameters.tenantId
+  const growthQuery = SQL(
+      `
+      SELECT count(*), created_at as date FROM prelaunch.registration 
+      WHERE sponsor_id IS NOT NULL AND tenant_id = :tenantId
+      group by created_at
+    `)({
+      tenantId
+    })
+  const growthResult = await context.db.query(growthQuery)
+  
+  callback(null, {
+    growth: growthResult.rows
+  })
+})

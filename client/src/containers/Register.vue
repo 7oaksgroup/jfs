@@ -9,7 +9,7 @@
             <input type="text" placeholder="First Name" v-model="currentUser.firstName" required/>
             <input type="text" placeholder="Last Name" v-model="currentUser.lastName" required/>
             <input type="email" placeholder="Email" v-model="currentUser.email" required/>
-            <input type="text" placeholder="Zip Code" v-model="currentUser.zip" required/>
+            <input type="text" placeholder="Postal Code" v-model="currentUser.zip" required/>
             <input type="submit" value="submit"/>
           </form>
       </div>

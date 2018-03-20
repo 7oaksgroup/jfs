@@ -11,7 +11,8 @@ const state = {
   friends: [],
   count: 0,
   influence: [],
-  leaderboard: []
+  leaderboard: [],
+  reports: {}
 }
 
 const mutations = {
@@ -31,6 +32,9 @@ const mutations = {
   },
   addLeaderboard(state, data) {
     state.leaderboard = data.leaderboard
+  },
+  addReport(state, data) {
+    state.reports = data
   },
   logout(state) {
     state.currentUser = {}
@@ -110,6 +114,10 @@ const actions = {
   async getLeaderboard({ commit }) {
     const response = await UsersApi.getLeaderboard()
     commit('addLeaderboard', response.data)
+  },
+  async getReports({ commit }) {
+    const response = await UsersApi.getReports()
+    commit('addReport', response.data)
   }
 }
 

@@ -56,6 +56,7 @@ module.exports.facebook = (event, context, callback) => {
   } else if (qs.code) {
     // process request from facebook that has "code"
     var oauth2 = oauths[tenantId]
+    redirects[tenantId] = qs.redirectUrl
     var options = {
       redirect_uri: redirects[tenantId]
     }

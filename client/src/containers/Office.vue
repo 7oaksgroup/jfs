@@ -32,6 +32,7 @@
       <p class="bold">Join our Exclusive Facebook Group!</p>
       <Button href="https://www.facebook.com/groups/142418766393701/">Just For Stylists on Facebook</Button>
     </div>
+    <line-chart class="growth-chart" :data="growth"></line-chart>
     <div class="box grey">
       <Backbar :stylists="getStylists" :leaderboard="leaderboard"></Backbar>
     </div>
@@ -90,6 +91,7 @@ export default {
     }
     this.$store.dispatch('getInfluence')
     this.$store.dispatch('getLeaderboard')
+    this.$store.dispatch('getReports')
   },
   methods: {
     logout() {
@@ -127,6 +129,7 @@ export default {
       return this.$store.getters.firstName
     },
     ...mapState({
+      growth: state => state.reports.growth.map($ => [new Date($.date), $.count]),
       currentUser: state => state.currentUser,
       safeShareUrl: state =>
         `${window.location.origin}/invite?inviteCode=${state.currentUser.id}`,
@@ -157,6 +160,10 @@ export default {
 }
 .italics.small {
   font-size: 18px;
+}
+.growth-chart{
+  max-width: 1100px;
+  margin: auto;
 }
 
 .intro-list {

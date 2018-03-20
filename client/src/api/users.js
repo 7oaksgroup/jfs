@@ -32,6 +32,9 @@ export default {
   getLeaderboard: () => {
     return api.get(`/prelaunch/tenant/${tenantId}/leaderboard`)
   },
+  getReports: () => {
+    return api.get(`/prelaunch/tenant/${tenantId}/reports`)
+  },
   updateJwt: () => {
     const jwt = localStorage.getItem('jwt')
     api.defaults.headers.common['Authorization'] = `Bearer ${jwt}`

@@ -109,3 +109,15 @@ functions:
               paths:
                 tenantId: true
     environment: ${file(env.yaml):${self:custom.stage}}
+  reports:
+    handler: jfs.reports
+    events: 
+      - http:
+          path: prelaunch/tenant/{tenantId}/reports
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                tenantId: true
+    environment: ${file(env.yaml):${self:custom.stage}}
