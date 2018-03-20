@@ -129,7 +129,7 @@ export default {
       return this.$store.getters.firstName
     },
     ...mapState({
-      growth: state => state.reports.growth.map($ => [new Date($.date), $.count]),
+      growth: state => state.reports.growth ? state.reports.growth.map($ => [new Date($.date), $.count]) : [],
       currentUser: state => state.currentUser,
       safeShareUrl: state =>
         `${window.location.origin}/invite?inviteCode=${state.currentUser.id}`,

@@ -209,9 +209,11 @@ module.exports.reports = curry(async (event, context, callback) => {
   const tenantId = event.pathParameters.tenantId
   const growthQuery = SQL(
       `
-      SELECT count(*), created_at as date FROM prelaunch.registration 
-      WHERE sponsor_id IS NOT NULL AND tenant_id = :tenantId
-      group by created_at
+      SELECT count(*), date_trunc('day', created_at) as date FROM prelaunch.registration 
+      WHERE postal_code IS NOT NULL 
+      AND tenant_id = :tenantId
+      AND created_at > (SELECT MAX(created_at) from prelaunch.registration where tenant_id = :tenantId) - interval '30' day
+      group by date_trunc('day', created_at)
     `)({
       tenantId
     })
