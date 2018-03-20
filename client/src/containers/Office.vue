@@ -32,7 +32,7 @@
       <p class="bold">Join our Exclusive Facebook Group!</p>
       <Button href="https://www.facebook.com/groups/142418766393701/">Just For Stylists on Facebook</Button>
     </div>
-    <line-chart class="growth-chart" :data="growth"></line-chart>
+    <line-chart class="growth-chart" :data="growth" :colors="['#e6d878']"></line-chart>
     <div class="box grey">
       <Backbar :stylists="getStylists" :leaderboard="leaderboard"></Backbar>
     </div>
