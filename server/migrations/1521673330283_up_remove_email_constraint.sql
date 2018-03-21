@@ -1,0 +1,1 @@
+ALTER TABLE prelaunch.registration DROP CONSTRAINT registration_email_key;
